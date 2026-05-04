@@ -1,0 +1,99 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+  position: relative;
+  isolation: isolate;
+  flex-shrink: 0;
+
+  // Bare black box. No border. No rounded corners. The void.
+  width: clamp(280px, 28vw, 380px);
+  height: clamp(220px, 26vw, 300px);
+  background: #000;
+  padding: $space-md;
+  overflow: hidden;
+  cursor: pointer;
+
+  // The whole card transitions in/out of its hover state.
+  transition: transform 320ms $ease-out;
+
+  &:hover, &:focus-within {
+    .media     { opacity: 1; }
+    .mediaImg  { transform: scale(1.04); }
+  }
+
+  &[data-muted] .body { opacity: 0.55; }
+  &[data-muted]:hover .body { opacity: 1; }
+}
+
+// --- Hover image ---------------------------------------------------------- //
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 360ms $ease-out;
+  background: #000;
+
+  // Dark gradient over the image so the text stays legible.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 100%);
+    pointer-events: none;
+  }
+}
+
+.mediaImg {
+  object-fit: cover;
+  filter: saturate(1.1) contrast(1.05);
+  transition: transform 800ms $ease-out;
+}
+
+// --- Body ---------------------------------------------------------------- //
+.body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: $space-sm;
+  height: 100%;
+  transition: opacity 240ms $ease-out;
+}
+
+.name {
+  font-family: $font-mono;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: $color-text;
+}
+
+.built {
+  font-family: $font-mono;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: $color-text-muted;
+  align-self: end;
+  max-width: 28ch;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: $space-sm;
+}
+
+.year {
+  font-family: $font-mono;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: $color-text-muted;
+}
+
+.status { @include eyebrow; }

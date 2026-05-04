@@ -1,0 +1,45 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.logo {
+  position: fixed;
+  top: $space-md;
+  right: $gutter;
+  z-index: 100;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  color: $color-text;
+  opacity: 0.7;
+
+  transition: opacity 220ms $ease-out;
+
+  &:hover, &:focus-visible { opacity: 1; }
+}
+
+.mark {
+  width: 18px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.text {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.line {
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dot {
+  font-style: normal;
+  color: $color-text;
+}

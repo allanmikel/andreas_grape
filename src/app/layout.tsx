@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { fontMono } from '@/lib/fonts';
 import { LenisProvider } from '@/components/Lenis/LenisProvider';
+import { Logo } from '@/components/Logo/Logo';
 import './globals.scss';
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" className={fontMono.variable}>
       <body>
         <a href="#main" className="skip-link">Skip to content</a>
+        <Logo />
         <LenisProvider>
           <main id="main">{children}</main>
         </LenisProvider>

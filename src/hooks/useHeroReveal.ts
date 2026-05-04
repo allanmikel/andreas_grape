@@ -5,12 +5,9 @@ import gsap from 'gsap';
 
 /**
  * Letter-by-letter reveal — fires once on mount.
- * ~20ms per character, blur 4px → 0px, slight upward drift.
- * Skipped entirely under prefers-reduced-motion.
- *
- * The element's existing text content is preserved server-side for SEO
- * and accessibility; the client effect splits it into spans only after
- * mount, so screen readers still see the full sentence.
+ * Words stay intact (each char is wrapped inside a `.word` span with
+ * `white-space: nowrap`), so wrapping happens between words only.
+ * Skipped under prefers-reduced-motion.
  */
 export function useHeroReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -25,14 +22,23 @@ export function useHeroReveal<T extends HTMLElement>() {
     const original = el.textContent ?? '';
     el.setAttribute('aria-label', original);
 
-    el.innerHTML = original
-      .split('')
-      .map((ch) =>
-        ch === ' '
-          ? '<span class="char" aria-hidden="true">&nbsp;</span>'
-          : `<span class="char" aria-hidden="true">${ch}</span>`,
-      )
-      .join('');
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const html = original
+      .split(' ')
+      .map((word) => {
+        const chars = word
+          .split('')
+          .map((ch) => `<span class="char" aria-hidden="true">${escape(ch)}</span>`)
+          .join('');
+        // The word wrapper keeps characters glued together.
+        return `<span class="word" aria-hidden="true">${chars}</span>`;
+      })
+      // Real space characters between words are the only legal wrap points.
+      .join(' ');
+
+    el.innerHTML = html;
 
     const chars = el.querySelectorAll('.char');
 
@@ -43,7 +49,7 @@ export function useHeroReveal<T extends HTMLElement>() {
       duration: 0.7,
       stagger: 0.018,
       ease: 'power3.out',
-      delay: 0.15,
+      delay: 0.2,
     });
 
     return () => {

@@ -1,0 +1,62 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.section {
+  padding-block: $space-2xl $space-2xl;
+  // No container — marquees bleed edge-to-edge. Header still uses gutter.
+}
+
+// --- Section header ------------------------------------------------------- //
+.header {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-sm;
+  margin-bottom: $space-xl;
+
+  @include desktop {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+  }
+}
+
+.eyebrow {
+  @include eyebrow;
+  grid-column: 1 / -1;
+}
+
+.title {
+  font-family: $font-mono;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: $color-text;
+  @include fluid-type(1.75rem, 4vw, 3rem);
+}
+
+.summary {
+  @include eyebrow;
+  align-self: end;
+
+  @include desktop { text-align: right; }
+}
+
+// --- Group ---------------------------------------------------------------- //
+.group {
+  margin-bottom: $space-xl;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.groupHeader {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: $space-sm;
+  margin-bottom: $space-md;
+  border-bottom: 1px solid $color-divider;
+}
+
+.groupLabel { @include eyebrow; color: $color-text; }
+.groupCount { @include eyebrow; }

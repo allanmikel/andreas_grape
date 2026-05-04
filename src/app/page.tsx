@@ -1,11 +1,11 @@
-import { Nav } from '@/components/Nav/Nav';
 import { Hero } from '@/components/Hero/Hero';
+import { Portfolio } from '@/components/Portfolio/Portfolio';
 
 export default function Page() {
   return (
     <>
-      <Nav />
       <Hero />
+      <Portfolio />
     </>
   );
 }

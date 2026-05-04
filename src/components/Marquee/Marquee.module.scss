@@ -1,0 +1,52 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.viewport {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);  // bleed past container gutters
+  overflow: hidden;
+  position: relative;
+
+  // Soft fade at left/right edges so cards don't hard-cut at the viewport.
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 4%,
+    #000 96%,
+    transparent 100%
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+
+  // Pause whenever the user hovers any card (or the track itself).
+  &:hover { animation-play-state: paused; }
+
+  @include reduced-motion {
+    animation: none;
+    transform: none;
+  }
+}
+
+.set {
+  display: flex;
+  gap: $space-md;
+  padding-right: $space-md;
+  flex-shrink: 0;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(var(--marquee-distance, 50%) * -1), 0, 0); }
+}

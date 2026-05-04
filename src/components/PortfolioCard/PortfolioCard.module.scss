@@ -1,0 +1,149 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+  display: block;
+  flex: 0 0 auto;
+  width: 86vw;
+  max-width: 540px;
+  aspect-ratio: 4 / 5;
+  position: relative;
+  color: $color-text;
+  text-decoration: none;
+  outline: none;
+  scroll-snap-align: center;
+
+  // Default (non-active) state — slightly recessed.
+  opacity: 0.55;
+  transform: scale(0.94);
+  transition:
+    opacity 600ms $ease-out,
+    transform 600ms $ease-out,
+    filter 600ms $ease-out;
+  filter: saturate(0.7);
+  will-change: transform, opacity, filter;
+
+  @include tablet  { width: 70vw; max-width: 720px; aspect-ratio: 3 / 4; }
+  @include desktop { width: 52vw; max-width: 880px; aspect-ratio: 4 / 5; }
+
+  &[data-active='true'] {
+    opacity: 1;
+    transform: scale(1);
+    filter: saturate(1);
+  }
+
+  &[data-muted='true'] .image { filter: grayscale(1) contrast(1.05); }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    transform: scale(1);
+    filter: saturate(1);
+  }
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: $color-surface;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 1200ms $ease-out;
+  .card[data-active='true'] & { transform: scale(1.03); }
+}
+
+// Cinematic veil — keeps text legible, deepens on inactive cards.
+.veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to top,
+      rgba(10, 14, 20, 0.92) 0%,
+      rgba(10, 14, 20, 0.55) 38%,
+      rgba(10, 14, 20, 0.15) 70%,
+      rgba(10, 14, 20, 0.05) 100%
+    );
+  transition: opacity 600ms $ease-out;
+  .card:not([data-active='true']) & { opacity: 0.85; }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 14, 20, 0.18);
+    transition: opacity 600ms $ease-out;
+    .card[data-active='true'] & { opacity: 0; }
+  }
+}
+
+.meta {
+  position: absolute;
+  top: $space-md;
+  left: $space-md;
+  right: $space-md;
+  display: flex;
+  justify-content: space-between;
+  @include eyebrow;
+  color: rgba(232, 234, 237, 0.78);
+}
+
+.body {
+  position: absolute;
+  left: $space-md;
+  right: $space-md;
+  bottom: $space-md;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.name {
+  font-family: $font-mono;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  @include fluid-type(1.5rem, 3.4vw, 2.6rem);
+}
+
+.subtitle {
+  color: rgba(232, 234, 237, 0.78);
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+.description {
+  color: rgba(232, 234, 237, 0.7);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  max-width: 38ch;
+
+  // Hidden by default on desktop — revealed when card is active or focused.
+  // Always visible on touch where there's no hover.
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms $ease-out, transform 500ms $ease-out;
+  transition-delay: 80ms;
+
+  .card[data-active='true'] &,
+  .card:hover &,
+  .card:focus-visible & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @include touch {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@include reduced-motion {
+  .card { opacity: 1; transform: none; filter: none; transition: none; }
+  .image { transition: none; }
+  .description { opacity: 1; transform: none; transition: none; }
+}

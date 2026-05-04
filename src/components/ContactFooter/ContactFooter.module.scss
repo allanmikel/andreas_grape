@@ -1,0 +1,53 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.footer {
+  border-top: 1px solid $color-divider;
+  padding-block: $space-xl;
+  background: $color-bg;
+}
+
+.inner {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-md;
+  align-items: end;
+
+  @include desktop {
+    grid-template-columns: auto 1fr auto;
+  }
+}
+
+.eyebrow { @include eyebrow; }
+
+.links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+
+  @include desktop {
+    align-items: end;
+  }
+}
+
+.link {
+  font-family: $font-mono;
+  color: $color-text;
+  letter-spacing: -0.01em;
+  @include fluid-type(1.25rem, 2.4vw, 1.875rem);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 300ms $ease-out, color 300ms $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-bottom-color: $color-text;
+  }
+}
+
+.meta {
+  @include eyebrow;
+  @include desktop { text-align: right; }
+}

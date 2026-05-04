@@ -1,0 +1,133 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// =============================================================================
+// PortfolioChapter
+//
+// Desktop (>=1024px, fine pointer, no reduced-motion):
+//   - section is pinned to viewport height
+//   - .track is translated horizontally by usePinnedHorizontalScroll
+//   - chapters pin sequentially, producing a hard cut between scenes
+//
+// Mobile / touch / reduced-motion:
+//   - section flows naturally
+//   - .track becomes a native horizontal scroll-snap carousel
+// =============================================================================
+
+.chapter {
+  position: relative;
+  width: 100%;
+  background: $color-bg;
+  // Hard architectural divider between chapters.
+  border-top: 1px solid $color-divider;
+
+  // On the desktop pinned path the track is translated by GSAP, so we need to
+  // contain it. On mobile the carousel handles its own overflow on the track.
+  @media (min-width: 1024px) and (pointer: fine) {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-block: $space-lg $space-lg;
+
+  @media (min-width: 1024px) and (pointer: fine) {
+    padding-block: $space-md $space-md;
+    height: 100vh;
+  }
+}
+
+.header {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: $space-md;
+  padding-bottom: $space-sm;
+  margin-bottom: $space-md;
+  border-bottom: 1px solid $color-divider;
+  @include eyebrow;
+}
+
+.num   { color: $color-text; }
+.label { color: $color-text; letter-spacing: 0.16em; }
+.count { color: $color-text-muted; }
+
+.title {
+  @include container;
+  font-family: $font-mono;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  color: $color-text;
+  margin-bottom: $space-md;
+  @include fluid-type(1.75rem, 4.4vw, 3.25rem);
+  max-width: 18ch;
+
+  @media (min-width: 1024px) and (pointer: fine) {
+    margin-bottom: $space-md;
+  }
+}
+
+// --- Track ---------------------------------------------------------------- //
+.track {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  width: 100%;
+
+  // Mobile / touch: native scroll-snap carousel.
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  // Side padding so first/last cards can sit centered under snap.
+  padding-inline: 7vw;
+  padding-block: $space-md;
+
+  @media (min-width: 1024px) and (pointer: fine) {
+    // Desktop pinned mode: GSAP translates this track horizontally.
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-inline: 0;
+    padding-block: 0;
+    flex: 1 1 auto;
+    will-change: transform;
+  }
+}
+
+// Spacers ensure the first card can land centered and the last card can sit
+// centered before the chapter unpins (desktop), and provide breathing room on
+// mobile snap.
+.spacerStart,
+.spacerEnd {
+  flex: 0 0 auto;
+  width: 1px;
+  height: 1px;
+
+  @media (min-width: 1024px) and (pointer: fine) {
+    // Half the viewport minus half the max card width keeps the active card
+    // centered on the screen at the start and end of the pinned scroll.
+    width: max(8vw, calc(50vw - 440px));
+    height: 1px;
+  }
+}
+
+@include reduced-motion {
+  .chapter { height: auto; overflow: visible; }
+  .viewport { height: auto; }
+  .track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: 7vw;
+  }
+}

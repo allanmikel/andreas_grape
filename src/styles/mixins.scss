@@ -1,0 +1,27 @@
+@use 'variables' as *;
+
+@mixin tablet  { @media (min-width: #{$bp-tablet})  { @content; } }
+@mixin desktop { @media (min-width: #{$bp-desktop}) { @content; } }
+@mixin reduced-motion { @media (prefers-reduced-motion: reduce) { @content; } }
+@mixin touch { @media (pointer: coarse) { @content; } }
+
+@mixin container {
+  width: 100%;
+  max-width: #{$max-w};
+  margin-inline: auto;
+  padding-inline: #{$gutter};
+}
+
+@mixin fluid-type($min, $vw, $max) {
+  font-size: clamp(#{$min}, #{$vw}, #{$max});
+}
+
+// Direction B has no serif/sans split. Eyebrow = uppercase mono at small size.
+@mixin eyebrow {
+  font-family: #{$font-mono};
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #{$color-text-muted};
+}

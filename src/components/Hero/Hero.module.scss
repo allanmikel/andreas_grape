@@ -1,0 +1,34 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// B1: just the sentence. Left-anchored, off-center vertically, lots of air.
+// No eyebrow, no portrait, no CTA, no scroll cue. The sentence is the whole hero.
+
+.hero {
+  min-height: 100vh;
+  @include container;
+  display: grid;
+  // Asymmetric vertical: ~60% breathing space above, sentence sits in the lower third.
+  grid-template-rows: 6fr 4fr;
+  align-items: end;
+  padding-top: $space-2xl;
+  padding-bottom: $space-xl;
+}
+
+.headline {
+  font-family: $font-mono;
+  font-weight: 400;
+  // Tight but readable; mono at this size already has presence.
+  letter-spacing: -0.015em;
+  line-height: 1.18;
+  color: $color-text;
+  // Cap width so the sentence breaks into 2 deliberate lines on desktop.
+  max-width: 22ch;
+  @include fluid-type(1.5rem, 3.6vw, 2.875rem);
+
+  // Letter-reveal spans are inline-block so y/blur transforms paint cleanly.
+  :global(.char) {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+  }
+}

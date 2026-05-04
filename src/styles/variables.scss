@@ -1,0 +1,45 @@
+// =============================================================================
+// Design tokens — andreasgrape.com
+// Direction B: brutalist monochrome. Cold blue-black, single mono typeface.
+// No accent color. The only color on the site comes from images.
+// =============================================================================
+
+// --- Color ---------------------------------------------------------------- //
+$color-bg:         #0A0E14;   // Cold blue-black
+$color-surface:    #11161E;   // Subtle elevation
+$color-text:       #E8EAED;   // Cold off-white (slight blue cast)
+$color-text-muted: #6B7280;   // Cold grey
+$color-divider:    #1E2530;   // Hairline, almost invisible
+
+// No accent. Deliberately. Color enters through images only.
+// If a single moment ever needs to "ring," it's white-on-black, not orange.
+$color-ring: #FFFFFF;
+
+// --- Typography ----------------------------------------------------------- //
+// One typeface. IBM Plex Mono. No serif, no sans, no contrast trick.
+// Hierarchy comes from size, weight, case, and rhythm — never from family.
+$font-mono:    var(--font-mono), ui-monospace, 'Menlo', monospace;
+
+// Aliases kept so section components don't have to know we collapsed the stack.
+$font-display: $font-mono;
+$font-body:    $font-mono;
+
+// --- Spacing -------------------------------------------------------------- //
+$space-xs:  0.5rem;
+$space-sm:  1rem;
+$space-md:  2rem;
+$space-lg:  4rem;
+$space-xl:  8rem;
+$space-2xl: 12rem;
+
+// --- Layout --------------------------------------------------------------- //
+$gutter:   max(#{$space-md}, 4vw);
+$max-w:    1680px;
+
+// --- Breakpoints ---------------------------------------------------------- //
+$bp-tablet:  768px;
+$bp-desktop: 1280px;
+
+// --- Motion --------------------------------------------------------------- //
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);

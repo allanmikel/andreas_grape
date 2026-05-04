@@ -10,7 +10,7 @@ type Props = {
 };
 
 export function PortfolioCard({ item, priority }: Props) {
-  const { name, subtitle, description, image, imageAlt, href, year, status, muted } = item;
+  const { name, subtitle, description, image, imageAlt, href, year, status, role, muted } = item;
   const external = /^https?:\/\//.test(href);
 
   return (
@@ -36,10 +36,11 @@ export function PortfolioCard({ item, priority }: Props) {
 
         <div className={styles.meta}>
           <span className={styles.year}>{year}</span>
-          <span className={styles.status}>{status}</span>
+          <span className={styles.status} data-status={status.toLowerCase()}>{status}</span>
         </div>
 
         <div className={styles.body}>
+          {role && <span className={styles.role}>Role · {role}</span>}
           <h3 className={styles.name}>{name}</h3>
           <p className={styles.subtitle}>{subtitle}</p>
           <p className={styles.description}>{description}</p>

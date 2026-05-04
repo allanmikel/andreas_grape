@@ -9,11 +9,11 @@ import styles from './PortfolioChapter.module.scss';
 type Props = {
   index: number;
   label: string;
-  title: string;
   items: readonly Case[];
+  tone?: 'primary' | 'quiet';
 };
 
-export function PortfolioChapter({ index, label, title, items }: Props) {
+export function PortfolioChapter({ index, label, items, tone = 'primary' }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef   = useRef<HTMLDivElement>(null);
 
@@ -25,8 +25,9 @@ export function PortfolioChapter({ index, label, title, items }: Props) {
     <section
       ref={sectionRef}
       className={styles.chapter}
-      aria-labelledby={`chapter-${label.toLowerCase()}-title`}
+      aria-label={label}
       data-chapter={label.toLowerCase()}
+      data-tone={tone}
     >
       <div className={styles.viewport}>
         <header className={styles.header}>
@@ -36,10 +37,6 @@ export function PortfolioChapter({ index, label, title, items }: Props) {
             {String(items.length).padStart(2, '0')} entries
           </span>
         </header>
-
-        <h2 id={`chapter-${label.toLowerCase()}-title`} className={styles.title}>
-          {title}
-        </h2>
 
         <div ref={trackRef} className={styles.track}>
           <div className={styles.spacerStart} aria-hidden="true" />

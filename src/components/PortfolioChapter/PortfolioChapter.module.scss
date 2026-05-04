@@ -59,20 +59,10 @@
 .label { color: $color-text; letter-spacing: 0.16em; }
 .count { color: $color-text-muted; }
 
-.title {
-  @include container;
-  font-family: $font-mono;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
-  color: $color-text;
-  margin-bottom: $space-md;
-  @include fluid-type(1.75rem, 4.4vw, 3.25rem);
-  max-width: 18ch;
-
-  @media (min-width: 1024px) and (pointer: fine) {
-    margin-bottom: $space-md;
-  }
+// Quiet-tone tracks (Bets & Advisory) get a touch more breathing room
+// so the section reads as secondary to the founded-companies grid.
+.chapter[data-tone='quiet'] .track {
+  gap: $space-lg;
 }
 
 // --- Track ---------------------------------------------------------------- //

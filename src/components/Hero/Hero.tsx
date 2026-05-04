@@ -27,9 +27,21 @@ export function Hero() {
         />
       </div>
 
-      <h1 id="hero-headline" ref={headlineRef} className={styles.headline}>
-        {content.hero.sentence}
-      </h1>
+      <div className={styles.copy}>
+        <span className={styles.role}>{content.hero.role}</span>
+        <h1 id="hero-headline" ref={headlineRef} className={styles.headline}>
+          {content.hero.sentence}
+        </h1>
+
+        <nav className={styles.ctas} aria-label="Primary">
+          {content.hero.ctas.map((cta) => (
+            <a key={cta.label} href={cta.href} className={styles.cta}>
+              <span>{cta.label}</span>
+              <span aria-hidden="true" className={styles.ctaArrow}>→</span>
+            </a>
+          ))}
+        </nav>
+      </div>
     </section>
   );
 }

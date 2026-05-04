@@ -1,0 +1,105 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Shared editorial-section styling for Background / NordicAngels / RoadAhead.
+// Same rhythm as PortfolioChapter headers — eyebrow, large mono title, body.
+
+.section {
+  position: relative;
+  border-top: 1px solid $color-divider;
+  padding-block: $space-2xl $space-2xl;
+  background: $color-bg;
+}
+
+.inner {
+  @include container;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-lg;
+
+  @include desktop {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    column-gap: $space-2xl;
+    align-items: start;
+  }
+}
+
+.eyebrow { @include eyebrow; }
+
+.title {
+  font-family: $font-mono;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  color: $color-text;
+  margin-top: $space-sm;
+  max-width: 22ch;
+  @include fluid-type(1.75rem, 4vw, 3rem);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  color: $color-text;
+}
+
+.lead {
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 56ch;
+  color: $color-text;
+}
+
+// --- List rhythm shared by milestones, lines, road-ahead items ---------- //
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 4ch 1fr;
+  gap: $space-md;
+  padding-block: $space-sm;
+  border-bottom: 1px solid $color-divider;
+  align-items: baseline;
+
+  &:last-child { border-bottom: 0; }
+}
+
+.rowKey {
+  @include eyebrow;
+  color: $color-text-muted;
+}
+
+.rowText {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: $color-text;
+}
+
+.link {
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(232, 234, 237, 0.35);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: $color-text;
+  transition: border-color 300ms $ease-out, gap 300ms $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-bottom-color: $color-text;
+    gap: 0.9rem;
+  }
+}
+
+.place {
+  @include eyebrow;
+  margin-top: $space-md;
+}

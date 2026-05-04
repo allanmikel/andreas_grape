@@ -102,6 +102,18 @@
   gap: 0.5rem;
 }
 
+.role {
+  @include eyebrow;
+  color: rgba(232, 234, 237, 0.85);
+  letter-spacing: 0.16em;
+}
+
+.status {
+  // Pill-style status badge while keeping mono eyebrow language.
+  text-transform: uppercase;
+  &[data-status='exit'] { color: rgba(232, 234, 237, 0.55); }
+}
+
 .name {
   font-family: $font-mono;
   font-weight: 400;

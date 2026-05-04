@@ -27,13 +27,13 @@ export function usePinnedHorizontalScroll(
     if (!section || !track) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const coarse  = window.matchMedia('(pointer: coarse)').matches;
-    const narrow  = window.innerWidth < 1024;
-    if (reduced || coarse || narrow) return;
+    if (reduced) return;
 
     const ctx = gsap.context(() => {
       const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
       if (!cards.length) return;
+
+      const isCoarse = () => window.matchMedia('(pointer: coarse)').matches;
 
       const setActive = () => {
         const center = window.innerWidth / 2;
@@ -51,6 +51,8 @@ export function usePinnedHorizontalScroll(
 
       const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
+      const useSnap = isCoarse() && cards.length > 1;
+
       gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
@@ -59,9 +61,22 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          scrub: 0.6,
+          // Snappier scrub on touch so vertical flicks land cleanly between
+          // cards instead of feeling rubbery; smoother on desktop.
+          scrub: isCoarse() ? 0.25 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          // Touch only: snap each card center-screen so flick momentum lands
+          // cleanly. Desktop keeps free Lenis-driven scroll for smoothness.
+          ...(useSnap && {
+            snap: {
+              snapTo: 1 / (cards.length - 1),
+              duration: { min: 0.15, max: 0.45 },
+              ease: 'power2.out',
+              delay: 0,
+              inertia: false,
+            },
+          }),
           onUpdate: setActive,
           onRefresh: setActive,
         },

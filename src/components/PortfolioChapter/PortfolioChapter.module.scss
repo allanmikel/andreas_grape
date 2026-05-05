@@ -82,11 +82,11 @@
   @include desktop { width: max(21vw, calc(50vw - 550px)); }
 }
 
-// --- Native carousel mode (touch + reduced-motion) ----------------------- //
-// Coarse pointers and reduced-motion users both fall out of the GSAP pinned
-// path. The track becomes a native horizontal scroll-snap carousel so swipe
-// momentum is browser-native, not GSAP-driven.
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+// --- Reduced-motion fallback --------------------------------------------- //
+// Only users who explicitly opt out of motion fall back to a native carousel.
+// Touch users keep the GSAP pinned chapter so vertical scroll continues to
+// drive horizontal card movement.
+@include reduced-motion {
   .chapter {
     height: auto;
     overflow: visible;
@@ -110,8 +110,6 @@
     &::-webkit-scrollbar { display: none; }
   }
 
-  // Spacers no longer compute centering offsets — scroll-snap-align: center
-  // on each card already lands the active card under the viewport midpoint.
   .spacerStart,
   .spacerEnd { width: 1px; }
 }

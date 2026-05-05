@@ -9,16 +9,16 @@ if (typeof window !== 'undefined') {
 }
 
 /**
- * Pin a desktop section while translating an inner track horizontally as the
- * user scrolls vertically. The card whose progress index is closest to the
- * current ScrollTrigger progress receives [data-active="true"].
+ * Pin a section while translating an inner track horizontally as the user
+ * scrolls vertically. Active card detection is progress-based and only
+ * mutates the DOM when the active index actually changes.
  *
- * On coarse pointers we don't pin at all — the chapter falls back to a
- * native CSS scroll-snap carousel (handled in PortfolioChapter SCSS) and an
- * IntersectionObserver tracks the centered card so descriptions still reveal
- * as the user swipes.
+ * Both desktop and mobile use this pinned mechanic — mobile gets a longer
+ * pin distance and a softer scrub so vertical flicks read as cinematic
+ * horizontal motion rather than darting between cards.
  *
- * Under prefers-reduced-motion we do nothing — CSS owns the layout entirely.
+ * No-op under prefers-reduced-motion: the chapter falls back to a native
+ * scroll-snap carousel handled in CSS.
  */
 export function usePinnedHorizontalScroll(
   sectionRef: RefObject<HTMLElement | null>,
@@ -33,77 +33,61 @@ export function usePinnedHorizontalScroll(
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
 
-    const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
-    if (!cards.length) return;
+    const isCoarse = () => window.matchMedia('(pointer: coarse)').matches;
+    const coarse  = isCoarse();
 
-    const seedActive = (idx: number) => {
-      for (let i = 0; i < cards.length; i++) {
-        cards[i].dataset.active = i === idx ? 'true' : 'false';
-      }
-    };
-
-    // ---- Coarse pointer: native scroll, no GSAP, no pinning. ----
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      seedActive(0);
-
-      // Track which card is closest to the track's center as the user
-      // swipes — feeds the same [data-active] contract the cards already
-      // listen to, so description reveal continues to work.
-      const observer = new IntersectionObserver(
-        (entries) => {
-          let bestIdx = -1;
-          let bestRatio = 0;
-          for (const entry of entries) {
-            if (entry.intersectionRatio > bestRatio) {
-              bestRatio = entry.intersectionRatio;
-              bestIdx = cards.indexOf(entry.target as HTMLElement);
-            }
-          }
-          if (bestIdx >= 0) seedActive(bestIdx);
-        },
-        {
-          root: track,
-          // Tighten the detection band to ~the centered third of the track so
-          // only the card the user has actually landed on wins.
-          rootMargin: '0px -33% 0px -33%',
-          threshold: [0, 0.25, 0.5, 0.75, 1],
-        },
-      );
-
-      for (const c of cards) observer.observe(c);
-      return () => observer.disconnect();
-    }
-
-    // ---- Fine pointer (desktop): GSAP pinned horizontal scroll. ----
     track.style.willChange = 'transform';
 
     const ctx = gsap.context(() => {
+      const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
+      if (!cards.length) return;
+
+      // Track the last applied index so per-frame ScrollTrigger updates only
+      // touch the DOM when the centered card actually changes — eliminates a
+      // visible flicker on mobile during fast scroll.
+      let lastIdx = -1;
+
       const setActive = (progress: number) => {
         const last = cards.length - 1;
         const raw  = Math.round(progress * last);
         const idx  = Math.min(last, Math.max(0, raw));
-        seedActive(idx);
+        if (idx === lastIdx) return;
+        lastIdx = idx;
+        for (let i = 0; i < cards.length; i++) {
+          cards[i].dataset.active = i === idx ? 'true' : 'false';
+        }
       };
 
-      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      // Vertical scroll distance the chapter consumes before unpinning.
+      // On touch we stretch beyond the raw horizontal travel so each flick
+      // covers less horizontal ground per pixel of vertical scroll, reading
+      // as smoother cinematic motion rather than a darted carousel.
+      const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const distance   = () => horizontal() * (coarse ? 1.8 : 1);
 
       gsap.to(track, {
-        x: () => -distance(),
+        x: () => -horizontal(),
         ease: 'none',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          scrub: 0.6,
+          // Softer scrub on touch trails the finger more, smoothing jitter.
+          scrub: coarse ? 1.0 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          // No snap on touch: the longer distance + soft scrub already lands
+          // each card cleanly, and snap was the source of perceived jitter.
           onUpdate: (self) => setActive(self.progress),
           onRefresh: (self) => setActive(self.progress),
         },
       });
 
-      seedActive(0);
+      // Force the first card active immediately, bypassing the lastIdx guard.
+      lastIdx = -1;
+      setActive(0);
     }, section);
 
     return () => {

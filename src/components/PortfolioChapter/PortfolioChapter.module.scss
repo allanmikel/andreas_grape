@@ -102,12 +102,13 @@
 
   // Vertical centering spacers — push the first card down so it lands
   // under the header in a centered resting state, and let the last card
-  // exit the pin space cleanly.
+  // exit the pin space cleanly. Tighter than the prior 14svh because long
+  // spacers translate to dead scroll travel that read as delayed motion.
   .spacerStart,
   .spacerEnd {
     flex: 0 0 auto;
     width: 1px;
-    height: 14svh;
+    height: 10svh;
   }
 }
 

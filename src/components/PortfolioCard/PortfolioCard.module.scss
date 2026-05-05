@@ -36,11 +36,11 @@
     max-height: 72svh;
     filter: none;
 
-    opacity: 0.6;
-    transform: scale(0.97);
+    opacity: 0.7;
+    transform: scale(0.985);
     transition:
       opacity 350ms $ease-soft,
-      transform 350ms $ease-soft;
+      transform 450ms $ease-soft;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -196,6 +196,12 @@
   transform: translateY(8px);
   transition: opacity 500ms $ease-out, transform 500ms $ease-out;
   transition-delay: 80ms;
+
+  // Touch: lighter description transition for the pinned vertical carousel.
+  @include touch {
+    transition: opacity 350ms $ease-soft, transform 350ms $ease-soft;
+    transition-delay: 60ms;
+  }
 
   .card[data-active='true'] &,
   .card:focus-visible & {

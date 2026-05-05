@@ -68,8 +68,10 @@ export function usePinnedHorizontalScroll(
       };
 
       // Vertical scroll distance the chapter consumes before unpinning.
-      // Stretch on mobile for a slightly more cinematic settle.
-      const distance = () => travel() * (coarse ? 1.4 : 1);
+      // A longer mobile pin gives each card more page-scroll to traverse,
+      // which translates to a slower, smoother visual cadence per finger
+      // movement and reduces the jumpy feel of an aggressive carousel.
+      const distance = () => travel() * (coarse ? 1.8 : 1);
 
       gsap.to(track, {
         // Translate along the axis CSS lays the cards out on.
@@ -81,7 +83,9 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          scrub: coarse ? 1.0 : 0.6,
+          // Higher scrub on touch trails the finger more, smoothing the
+          // perceived motion against iOS rubberband and address-bar shifts.
+          scrub: coarse ? 1.2 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,

@@ -96,25 +96,28 @@
   .viewport {
     height: auto;
     overflow: visible;
-    padding-block: $space-xl;
+    padding-block: 0;
   }
 
+  // Header stays inside the container; the track underneath escapes it
+  // to run edge-to-edge as a fullscreen vertical sequence.
   .header {
-    margin-bottom: $space-lg;
+    margin-bottom: $space-md;
   }
 
   .track {
-    @include container;
     flex-direction: column;
     align-items: stretch;
-    gap: $space-xl;
+    gap: 0;
     height: auto;
-    width: 100%;
+    width: 100vw;
+    max-width: none;
+    padding: 0;
     overflow: visible;
     will-change: auto;
   }
 
-  .chapter[data-tone='quiet'] .track { gap: $space-xl; }
+  .chapter[data-tone='quiet'] .track { gap: 0; }
 
   .spacerStart,
   .spacerEnd { display: none; }

@@ -28,17 +28,17 @@
     filter 200ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: editorial vertical sequence. The hook marks every card
-  // as active so the description reads at full opacity; no JS layer between
-  // finger and motion. 4:5 aspect lets each card breathe as its own panel
-  // without dominating the screen, leaving room above/below to telegraph
-  // the next card and keep native scroll feeling natural.
+  // Touch devices: vertical fullscreen panels. Each card fills the viewport
+  // edge-to-edge so the next image begins exactly where the previous one
+  // ends — the IntersectionObserver in the hook flips data-active on the
+  // card centered in the viewport, which drives the slow zoom + text reveal.
   @include touch {
-    flex: 0 0 auto;
-    width: 100%;
+    flex: 0 0 100svh;
+    width: 100vw;
     max-width: none;
-    aspect-ratio: 4 / 5;
+    height: 100svh;
     max-height: none;
+    aspect-ratio: auto;
     filter: none;
     opacity: 1;
     transform: none;
@@ -101,13 +101,13 @@
   transition: transform 700ms $ease-soft;
   .card[data-active='true'] & { transform: scale(1.03); }
 
-  // Touch: no per-card image zoom. The card frame itself handles the
-  // active/inactive transform — image stays static so we don't pay for
-  // bitmap re-rasterisation during the pinned horizontal translate.
+  // Touch: only the highlighted (centered) card runs a slow, subtle zoom.
+  // Long duration + ease-out so the motion reads as cinematic drift, not
+  // a snap.
   @include touch {
-    transform: none;
-    transition: none;
-    .card[data-active='true'] & { transform: none; }
+    transform: scale(1);
+    transition: transform 5000ms $ease-soft;
+    .card[data-active='true'] & { transform: scale(1.08); }
   }
 }
 
@@ -209,16 +209,43 @@
   transition: opacity 500ms $ease-out, transform 500ms $ease-out;
   transition-delay: 80ms;
 
-  // Touch: lighter description transition for the pinned horizontal carousel.
+  // Touch: longer, softer description transition so it fades in alongside
+  // the slow zoom on the centered fullscreen panel.
   @include touch {
-    transition: opacity 350ms $ease-soft, transform 350ms $ease-soft;
-    transition-delay: 60ms;
+    transition: opacity 600ms $ease-soft, transform 650ms $ease-soft;
+    transition-delay: 0ms;
   }
 
   .card[data-active='true'] &,
   .card:focus-visible & {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// --- Touch-only: text reveals only on the highlighted (active) panel ---
+// On mobile every non-active card is a pure image panel. Meta + body fade
+// in once the IntersectionObserver promotes the card to data-active='true'.
+@include touch {
+  .meta,
+  .body {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition:
+      opacity 550ms $ease-soft,
+      transform 650ms $ease-soft;
+  }
+
+  .meta { transition: opacity 450ms $ease-soft; transform: none; }
+
+  .card[data-active='true'] {
+    .meta,
+    .body {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
   }
 }
 

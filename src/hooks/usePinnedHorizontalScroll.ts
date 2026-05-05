@@ -41,13 +41,39 @@ export function usePinnedHorizontalScroll(
     if (!cards.length) return;
 
     if (coarse) {
-      // Mobile: static vertical sequence. CSS lays the cards out as a column
-      // of editorial panels and native scroll moves through them. We just
-      // mark every card active so the description copy is visible on each.
-      for (let i = 0; i < cards.length; i++) {
-        cards[i].dataset.active = 'true';
-      }
-      return;
+      // Mobile: vertical fullscreen sequence. CSS stacks cards as 100svh
+      // panels with no gap; native scroll moves through them. An
+      // IntersectionObserver flips data-active on the card most centered in
+      // the viewport so only that card reveals its text + slow zoom.
+      const io = new IntersectionObserver(
+        (entries) => {
+          // Pick the most-visible intersecting entry as the active card.
+          let best: IntersectionObserverEntry | null = null;
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            if (!best || entry.intersectionRatio > best.intersectionRatio) {
+              best = entry;
+            }
+          }
+          if (!best) return;
+          const target = best.target as HTMLElement;
+          for (const card of cards) {
+            card.dataset.active = card === target ? 'true' : 'false';
+          }
+        },
+        {
+          // Center band: a card becomes active once it sits inside the
+          // middle 40% of the viewport.
+          rootMargin: '-30% 0px -30% 0px',
+          threshold: [0, 0.35, 0.5, 0.65, 1],
+        },
+      );
+
+      for (const card of cards) io.observe(card);
+      // First card active by default until the observer fires.
+      cards[0].dataset.active = 'true';
+
+      return () => io.disconnect();
     }
 
     // Desktop: scrubbed horizontal translate. The track is a row, vertical

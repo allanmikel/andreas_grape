@@ -10,7 +10,11 @@ export function ContactFooter() {
         <span className={styles.eyebrow} id="contact-title">Contact</span>
         <ul className={styles.links}>
           <li>
-            <a className={styles.link} href={`mailto:${email}`}>
+            <a
+              className={styles.link}
+              href={`mailto:${email}`}
+              aria-label="Email Andreas Grape"
+            >
               {email}
             </a>
           </li>
@@ -20,6 +24,7 @@ export function ContactFooter() {
               href={linkedin}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Andreas Grape on LinkedIn"
             >
               LinkedIn
             </a>

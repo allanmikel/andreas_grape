@@ -16,6 +16,15 @@
   font-size: clamp(#{$min}, #{$vw}, #{$max});
 }
 
+// Editorial section vertical rhythm. Mobile breathes less; desktop breathes more.
+@mixin section-padding {
+  padding-block: $space-section-mobile;
+
+  @include desktop {
+    padding-block: $space-section-desktop;
+  }
+}
+
 // Direction B has no serif/sans split. Eyebrow = uppercase mono at small size.
 @mixin eyebrow {
   font-family: #{$font-mono};

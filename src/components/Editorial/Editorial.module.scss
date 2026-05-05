@@ -7,8 +7,8 @@
 .section {
   position: relative;
   border-top: 1px solid $color-divider;
-  padding-block: $space-2xl $space-2xl;
   background: $color-bg;
+  @include section-padding;
 }
 
 .inner {
@@ -35,6 +35,8 @@
   margin-top: $space-sm;
   max-width: 22ch;
   @include fluid-type(1.75rem, 4vw, 3rem);
+
+  @include desktop { max-width: 24ch; }
 }
 
 .body {
@@ -65,6 +67,8 @@
   padding-block: $space-sm;
   border-bottom: 1px solid $color-divider;
   align-items: baseline;
+
+  @include desktop { padding-block: $space-md; }
 
   &:last-child { border-bottom: 0; }
 }

@@ -35,6 +35,7 @@ export function useCurtainScroll(
           start: 'top top',
           end: 'bottom top',
           scrub: 0.4,
+          invalidateOnRefresh: true,
         },
       });
     }, trigger);

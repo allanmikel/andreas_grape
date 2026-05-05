@@ -13,6 +13,8 @@ export function PortfolioCard({ item, priority }: Props) {
   const { name, subtitle, description, image, imageAlt, href, year, status, role, muted } = item;
   const external = /^https?:\/\//.test(href);
 
+  const ariaLabel = `${name}. ${role ? `Role: ${role}. ` : ''}${subtitle}. Status: ${status}.`;
+
   return (
     <a
       href={href}
@@ -20,7 +22,7 @@ export function PortfolioCard({ item, priority }: Props) {
       data-muted={muted || undefined}
       data-active="false"
       className={styles.card}
-      aria-label={`${name}. ${subtitle}`}
+      aria-label={ariaLabel}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       <div className={styles.frame}>
@@ -31,6 +33,7 @@ export function PortfolioCard({ item, priority }: Props) {
           sizes="(min-width: 1280px) 52vw, (min-width: 768px) 70vw, 86vw"
           className={styles.image}
           priority={priority}
+          loading={priority ? 'eager' : 'lazy'}
         />
         <div className={styles.veil} aria-hidden="true" />
 

@@ -24,13 +24,13 @@
     transform 600ms $ease-out,
     filter 600ms $ease-out;
   filter: saturate(0.7);
-  will-change: transform, opacity, filter;
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
   // rather than a phone-shaped portrait card.
   @include tablet  { width: 72vw; max-width: 880px;  aspect-ratio: 4 / 3;  max-height: 76vh; }
   @include desktop { width: 58vw; max-width: 1100px; aspect-ratio: 16 / 10; max-height: 76vh; }
 
+  // Active card = full reveal. Strongest visual emphasis in the chapter.
   &[data-active='true'] {
     opacity: 1;
     transform: scale(1);
@@ -39,11 +39,25 @@
 
   &[data-muted='true'] .image { filter: grayscale(1) contrast(1.05); }
 
-  &:hover,
+  // Hover is softer than active — neighbours can lift slightly on cursor pass
+  // without stealing the highlighted card's narrative beat. Touch devices skip
+  // this rule entirely so a tap doesn't masquerade as hover.
+  @media (hover: hover) {
+    &:hover {
+      opacity: 0.85;
+      transform: scale(1);
+      filter: saturate(1);
+    }
+  }
+
+  // Distinct keyboard focus state — full reveal plus a hairline ring so the
+  // focused card reads as its own affordance, not just another active card.
   &:focus-visible {
     opacity: 1;
     transform: scale(1);
     filter: saturate(1);
+    outline: 1px solid $color-text;
+    outline-offset: 6px;
   }
 }
 
@@ -137,17 +151,19 @@
   color: rgba(232, 234, 237, 0.78);
   font-size: 0.8125rem;
   line-height: 1.5;
-  max-width: 42ch;
+  max-width: min(42ch, 100%);
 
-  // Visible only on the highlighted (active) card — same on desktop and touch.
-  // Hover/focus also reveal it on devices that support them.
+  @media (max-width: 767px) { font-size: 0.875rem; }
+
+  // Visible only on the highlighted (active) card or when keyboard-focused.
+  // Hover alone no longer reveals the description — that beat belongs to the
+  // active card to keep the narrative hierarchy clear.
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 500ms $ease-out, transform 500ms $ease-out;
   transition-delay: 80ms;
 
   .card[data-active='true'] &,
-  .card:hover &,
   .card:focus-visible & {
     opacity: 1;
     transform: translateY(0);

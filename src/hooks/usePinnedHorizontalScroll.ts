@@ -10,11 +10,13 @@ if (typeof window !== 'undefined') {
 
 /**
  * Pin a section while translating an inner track horizontally as the user
- * scrolls vertically. The card whose center is closest to the viewport
- * center receives [data-active="true"].
+ * scrolls vertically. The card whose index is closest to the current
+ * ScrollTrigger progress receives [data-active="true"].
  *
- * No-op on touch / coarse pointers and on reduced-motion — the chapter falls
- * back to its mobile scroll-snap layout, which is implemented in CSS.
+ * Active-card detection is progress-based — no per-frame DOM layout reads.
+ *
+ * No-op under prefers-reduced-motion: the chapter falls back to its CSS
+ * scroll-snap layout.
  */
 export function usePinnedHorizontalScroll(
   sectionRef: RefObject<HTMLElement | null>,
@@ -29,23 +31,22 @@ export function usePinnedHorizontalScroll(
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
 
+    // Promote the track only while the hook owns it. The CSS no longer carries
+    // a permanent will-change, so memory is only reserved during animation.
+    track.style.willChange = 'transform';
+
     const ctx = gsap.context(() => {
       const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
       if (!cards.length) return;
 
       const isCoarse = () => window.matchMedia('(pointer: coarse)').matches;
 
-      const setActive = () => {
-        const center = window.innerWidth / 2;
-        let closestIdx = 0;
-        let closestDist = Infinity;
+      const setActive = (progress: number) => {
+        const last = cards.length - 1;
+        const raw  = Math.round(progress * last);
+        const idx  = Math.min(last, Math.max(0, raw));
         for (let i = 0; i < cards.length; i++) {
-          const r = cards[i].getBoundingClientRect();
-          const d = Math.abs(r.left + r.width / 2 - center);
-          if (d < closestDist) { closestDist = d; closestIdx = i; }
-        }
-        for (let i = 0; i < cards.length; i++) {
-          cards[i].dataset.active = i === closestIdx ? 'true' : 'false';
+          cards[i].dataset.active = i === idx ? 'true' : 'false';
         }
       };
 
@@ -65,29 +66,38 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          // Higher scrub on touch = more lag = smoother trailing motion.
+          // Keep current desktop / touch feel.
           scrub: isCoarse() ? 0.9 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          // 'transform' pin is steadier than the default 'fixed' on iOS where
+          // the address-bar chrome shifts the layout viewport mid-scroll.
+          ...(isCoarse() && { pinType: 'transform' as const }),
           // Touch only: snap each card center-screen with a slow, soft glide
-          // so flick momentum lands without feeling abrupt.
+          // so flick momentum lands cleanly without feeling abrupt.
           ...(useSnap && {
             snap: {
               snapTo: 1 / (cards.length - 1),
               duration: { min: 0.45, max: 0.9 },
               ease: 'power3.out',
-              delay: 0.08,
-              inertia: false,
+              delay: 0.15,
+              inertia: true,
             },
           }),
-          onUpdate: setActive,
-          onRefresh: setActive,
+          onUpdate: (self) => setActive(self.progress),
+          onRefresh: (self) => setActive(self.progress),
         },
       });
 
-      setActive();
+      // Mark the first card active immediately so the chapter never appears
+      // with every card in its dim default state on first paint.
+      setActive(0);
     }, section);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      track.style.willChange = '';
+    };
   }, [sectionRef, trackRef, cardSelector]);
 }

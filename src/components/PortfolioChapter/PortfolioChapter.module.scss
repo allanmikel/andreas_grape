@@ -20,15 +20,16 @@
   background: $color-bg;
   border-top: 1px solid $color-divider;
 
-  // Pinned mode contains the translated track.
-  height: 100vh;
+  // Pinned mode contains the translated track. Use small viewport units so
+  // iOS Safari address-bar chrome doesn't push the body below the fold.
+  height: 100svh;
   overflow: hidden;
 }
 
 .viewport {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   padding-block: $space-md;
@@ -64,6 +65,8 @@
   width: 100%;
   // GSAP translates this in pinned mode.
   will-change: transform;
+
+  @include desktop { gap: $space-lg; }
 }
 
 // Side spacers keep the first and last cards landing centered when the track

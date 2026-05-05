@@ -3,12 +3,16 @@
 
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100svh;
   overflow: hidden;
   display: grid;
   grid-template-rows: 6fr 4fr;
   align-items: end;
-  padding: $space-2xl $gutter $space-xl;
+  padding: $space-xl $gutter $space-xl;
+
+  @include desktop {
+    padding: $space-2xl $gutter $space-xl;
+  }
 }
 
 // --- Portrait curtain layer ---------------------------------------------- //
@@ -38,6 +42,8 @@
   object-position: center 30%;
   opacity: 0.42; // Direction B: portrait is the only color, but muted.
   filter: saturate(1.1) contrast(1.05);
+
+  @include desktop { opacity: 0.5; }
 }
 
 // --- Copy block ----------------------------------------------------------- //

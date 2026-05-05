@@ -43,3 +43,16 @@ $bp-desktop: 1280px;
 // --- Motion --------------------------------------------------------------- //
 $ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 $ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+// --- Section rhythm ------------------------------------------------------- //
+// Editorial sections (Background / NordicAngels / RoadAhead) inherit these
+// via the section-padding mixin so mobile and desktop have distinct breathing.
+$space-section-mobile:  $space-xl;
+$space-section-desktop: $space-2xl;
+
+// --- Veil --------------------------------------------------------------- //
+// Card overlay gradient stops, hoisted so cards and other surfaces share
+// a single source of truth for the cold blue-black wash.
+$veil-top:    rgba(10, 14, 20, 0.05);
+$veil-bottom: rgba(10, 14, 20, 0.92);

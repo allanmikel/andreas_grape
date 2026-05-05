@@ -38,8 +38,11 @@ export function usePinnedHorizontalScroll(
 
     track.style.willChange = 'transform';
     // Promote to a 3D layer so iOS keeps the track on its compositor thread
-    // and avoids re-rasterising on every scroll tick.
-    gsap.set(track, { force3D: true });
+    // and avoids re-rasterising on every scroll tick. Seed x: 0 so the very
+    // first paint is already on the compositor.
+    gsap.set(track, { force3D: true, x: 0 });
+
+    let rafId = 0;
 
     const ctx = gsap.context(() => {
       const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
@@ -65,7 +68,7 @@ export function usePinnedHorizontalScroll(
       // On touch we stretch the pin so each pixel of finger movement covers
       // less horizontal ground — reads as cinematic motion, not a flick.
       const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
-      const distance   = () => horizontal() * (coarse ? 2.2 : 1);
+      const distance   = () => horizontal() * (coarse ? 2.6 : 1);
 
       gsap.to(track, {
         x: () => -horizontal(),
@@ -77,7 +80,7 @@ export function usePinnedHorizontalScroll(
           end: () => `+=${distance()}`,
           pin: true,
           // Softer scrub on touch trails the finger more, smoothing jitter.
-          scrub: coarse ? 1.2 : 0.6,
+          scrub: coarse ? 1.4 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,
@@ -91,9 +94,18 @@ export function usePinnedHorizontalScroll(
       // Force the first card active immediately, bypassing the cache guard.
       activeIndex = -1;
       setActiveByProgress(0);
+
+      // One-shot stability refresh after layout settles. Mobile especially
+      // benefits because address-bar collapse can shift the layout viewport
+      // between mount and first scroll, and we want pin geometry to match
+      // the post-settle viewport rather than the initial one.
+      rafId = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
     }, section);
 
     return () => {
+      cancelAnimationFrame(rafId);
       ctx.revert();
       track.style.willChange = '';
     };

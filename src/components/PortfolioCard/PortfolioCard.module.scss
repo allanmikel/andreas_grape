@@ -25,13 +25,20 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: shorter transitions reduce the felt latency between scroll
-  // input and visual response, which removes the lingering "lag" on mobile.
+  // Touch devices: lighter active-state recipe so scrolling doesn't trigger
+  // expensive filter recompositing or image rasterisation per active flip.
+  // - No filter animation (saturate is composited cheaply but flips per scroll
+  //   were measurable on mid-range Android).
+  // - Subtler scale step (0.97 -> 1) so transform deltas are tiny.
+  // - Higher inactive opacity so the active card still leads visually without
+  //   needing a heavy darken on its neighbours.
   @include touch {
+    opacity: 0.7;
+    transform: scale(0.97);
+    filter: none;
     transition:
-      opacity 450ms $ease-out,
-      transform 450ms $ease-out,
-      filter 450ms $ease-out;
+      opacity 350ms $ease-out,
+      transform 350ms $ease-out;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -44,6 +51,10 @@
     opacity: 1;
     transform: scale(1);
     filter: saturate(1);
+
+    // On touch the active card stops short of the saturate filter so we
+    // don't pay for a layer-wide filter swap during scroll.
+    @include touch { filter: none; }
   }
 
   &[data-muted='true'] .image { filter: grayscale(1) contrast(1.05); }
@@ -82,6 +93,15 @@
   object-fit: cover;
   transition: transform 1200ms $ease-out;
   .card[data-active='true'] & { transform: scale(1.03); }
+
+  // Touch: skip the active-card image zoom. Image transforms during a pinned
+  // scroll force the GPU to re-rasterise large bitmaps at every active flip,
+  // which is the single biggest source of mid-range mobile jank. The card
+  // already lifts via its own scale + opacity to signal active state.
+  @include touch {
+    transition: none;
+    .card[data-active='true'] & { transform: none; }
+  }
 }
 
 // Cinematic veil — keeps text legible, deepens on inactive cards.

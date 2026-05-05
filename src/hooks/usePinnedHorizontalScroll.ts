@@ -62,7 +62,7 @@ export function usePinnedHorizontalScroll(
       // Vertical scroll distance the chapter consumes before unpinning. A
       // longer mobile pin slows the visual cadence per finger movement and
       // dampens the jumpy feel of finger inertia.
-      const distance = () => horizontal() * (coarse ? 2.4 : 1);
+      const distance = () => horizontal() * (coarse ? 1.45 : 1);
 
       // On mobile each card is 100vw, so cards.length - 1 stops are evenly
       // spaced across the timeline. Snap nudges the user onto whichever
@@ -79,14 +79,15 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          // Higher scrub on touch trails the finger more, smoothing the
-          // perceived motion against iOS rubberband and address-bar shifts.
-          scrub: coarse ? 1.2 : 0.6,
+          // Lower mobile scrub keeps the translate close to the finger so
+          // motion feels deliberate rather than floating; snap below then
+          // settles each card centered.
+          scrub: coarse ? 0.65 : 0.6,
           snap: coarse && snapSteps > 0
             ? {
                 snapTo: snapSteps,
-                duration: { min: 0.25, max: 0.5 },
-                delay: 0.05,
+                duration: { min: 0.22, max: 0.38 },
+                delay: 0.02,
                 ease: 'power2.out',
                 inertia: false,
               }

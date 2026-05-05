@@ -41,7 +41,15 @@ export function PortfolioChapter({ index, label, items, tone = 'primary' }: Prop
         <div ref={trackRef} className={styles.track}>
           <div className={styles.spacerStart} aria-hidden="true" />
           {items.map((item, i) => (
-            <PortfolioCard key={item.slug} item={item} priority={index === 1 && i === 0} />
+            <PortfolioCard
+              key={item.slug}
+              item={item}
+              priority={index === 1 && i === 0}
+              // Eager-load the first three cards of every chapter so the
+              // mobile step-machine never lands on a card whose image is
+              // still mid-fetch. Subsequent cards stay lazy.
+              eager={i < 3}
+            />
           ))}
           <div className={styles.spacerEnd} aria-hidden="true" />
         </div>

@@ -113,6 +113,12 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${totalDistance()}`,
           pin: true,
+          // Pin via CSS transforms instead of position:fixed on touch. iOS
+          // Safari's address-bar collapse fires layout invalidations that can
+          // bump a position:fixed pin off by a frame mid-tween; transform-pin
+          // sidesteps that path. Only enabled on coarse so desktop's existing
+          // pin behaviour is untouched.
+          pinType: 'transform',
           anticipatePin: 1,
           invalidateOnRefresh: true,
           // fastScrollEnd fires extra onUpdates on flick release which can

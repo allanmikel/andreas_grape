@@ -6,10 +6,16 @@ import styles from './PortfolioCard.module.scss';
 
 type Props = {
   item: Case;
+  /** LCP candidate: passed to next/image as priority. Use only on the very
+   *  first card of the very first chapter. */
   priority?: boolean;
+  /** Skip lazy-loading without claiming LCP priority. Used for the next few
+   *  cards in a chapter so step-machine transitions never reveal a card whose
+   *  image is still mid-fetch. */
+  eager?: boolean;
 };
 
-export function PortfolioCard({ item, priority }: Props) {
+export function PortfolioCard({ item, priority, eager }: Props) {
   const { name, subtitle, description, image, imageAlt, href, year, status, role, muted } = item;
   const external = /^https?:\/\//.test(href);
 
@@ -33,7 +39,7 @@ export function PortfolioCard({ item, priority }: Props) {
           sizes="(min-width: 1280px) 52vw, (min-width: 768px) 70vw, 86vw"
           className={styles.image}
           priority={priority}
-          loading={priority ? 'eager' : 'lazy'}
+          loading={priority || eager ? 'eager' : 'lazy'}
         />
         <div className={styles.veil} aria-hidden="true" />
 

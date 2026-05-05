@@ -11,9 +11,12 @@ if (typeof window !== 'undefined') {
 /**
  * Pin a chapter section while the page-scroll drives the inner card track.
  *
- * Vertical page scroll → horizontal track translate on every device. Mobile
- * uses a longer pin distance and higher scrub so the same interaction reads
- * smoothly under finger inertia and iOS address-bar shifts.
+ *   Desktop / fine pointer:  scrubbed horizontal translate. The track follows
+ *                            the finger continuously across the timeline.
+ *   Mobile / coarse pointer: discrete slide switching. Scroll progress maps
+ *                            to a target panel index; each switch is its own
+ *                            short controlled tween, so cards hold between
+ *                            transitions instead of floating.
  *
  * Active card detection is progress-based and only mutates the DOM when the
  * centered index changes. No-op under prefers-reduced-motion.
@@ -44,64 +47,87 @@ export function usePinnedHorizontalScroll(
 
       let activeIndex = -1;
 
-      const setActiveByProgress = (progress: number) => {
+      const setActive = (next: number) => {
         const last = cards.length - 1;
-        const raw  = Math.round(progress * last);
-        const next = Math.min(last, Math.max(0, raw));
-        if (next === activeIndex) return;
-        activeIndex = next;
+        const clamped = Math.min(last, Math.max(0, next));
+        if (clamped === activeIndex) return;
+        activeIndex = clamped;
         for (let i = 0; i < cards.length; i++) {
-          cards[i].dataset.active = i === next ? 'true' : 'false';
+          cards[i].dataset.active = i === clamped ? 'true' : 'false';
         }
       };
 
-      // Track is laid out as a horizontal row on every device, so scrollWidth
-      // expresses the available carousel travel.
-      const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      if (coarse) {
+        // --- Mobile: discrete slide switching ----------------------------- //
+        // Each fullscreen card is 100vw. Vertical scroll progress maps to a
+        // target index; the track tweens to that panel in a short controlled
+        // animation, then holds. No scrub — between switches the track sits
+        // still, so the user reads a deliberate "swipe to next" instead of a
+        // continuous floating timeline.
+        const last = cards.length - 1;
 
-      // Vertical scroll distance the chapter consumes before unpinning. A
-      // longer mobile pin slows the visual cadence per finger movement and
-      // dampens the jumpy feel of finger inertia.
-      const distance = () => horizontal() * (coarse ? 1.45 : 1);
+        // One viewport of vertical scroll per image switch. Times last so the
+        // pin lasts exactly long enough to traverse every panel once.
+        const totalDistance = () => window.innerHeight * Math.max(1, last);
 
-      // On mobile each card is 100vw, so cards.length - 1 stops are evenly
-      // spaced across the timeline. Snap nudges the user onto whichever
-      // fullscreen panel is closest after the finger lifts so cards always
-      // come to rest centered, not half-way between two images.
-      const snapSteps = cards.length > 1 ? 1 / (cards.length - 1) : 0;
+        const goTo = (index: number) => {
+          const clamped = Math.min(last, Math.max(0, index));
+          gsap.to(track, {
+            x: -clamped * window.innerWidth,
+            duration: 0.55,
+            ease: 'power3.out',
+            force3D: true,
+            overwrite: true,
+          });
+          setActive(clamped);
+        };
 
-      gsap.to(track, {
-        x: () => -horizontal(),
-        ease: 'none',
-        force3D: true,
-        scrollTrigger: {
+        ScrollTrigger.create({
           trigger: section,
           start: 'top top',
-          end: () => `+=${distance()}`,
+          end: () => `+=${totalDistance()}`,
           pin: true,
-          // Lower mobile scrub keeps the translate close to the finger so
-          // motion feels deliberate rather than floating; snap below then
-          // settles each card centered.
-          scrub: coarse ? 0.65 : 0.6,
-          snap: coarse && snapSteps > 0
-            ? {
-                snapTo: snapSteps,
-                duration: { min: 0.22, max: 0.38 },
-                delay: 0.02,
-                ease: 'power2.out',
-                inertia: false,
-              }
-            : undefined,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,
-          onUpdate: (self) => setActiveByProgress(self.progress),
-          onRefresh: (self) => setActiveByProgress(self.progress),
-        },
-      });
+          onUpdate: (self) => {
+            const target = Math.round(self.progress * last);
+            if (target !== activeIndex) goTo(target);
+          },
+          onRefresh: (self) => {
+            const target = Math.round(self.progress * last);
+            // Snap track to the correct panel after layout shifts (address-bar
+            // collapse, rotation) without animating.
+            gsap.set(track, { x: -target * window.innerWidth, force3D: true });
+            setActive(target);
+          },
+        });
 
-      activeIndex = -1;
-      setActiveByProgress(0);
+        setActive(0);
+      } else {
+        // --- Desktop: scrubbed horizontal translate ----------------------- //
+        const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+        gsap.to(track, {
+          x: () => -horizontal(),
+          ease: 'none',
+          force3D: true,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: () => `+=${horizontal()}`,
+            pin: true,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            fastScrollEnd: true,
+            onUpdate: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
+            onRefresh: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
+          },
+        });
+
+        setActive(0);
+      }
 
       // Settle pin geometry once after layout (iOS address-bar collapse,
       // late-loading images, etc.).

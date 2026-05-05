@@ -32,15 +32,17 @@ export function PortfolioCard({ item, priority, eager }: Props) {
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
       <div className={styles.frame}>
-        <Image
-          src={image}
-          alt={imageAlt ?? ''}
-          fill
-          sizes="(min-width: 1280px) 52vw, (min-width: 768px) 70vw, 86vw"
-          className={styles.image}
-          priority={priority}
-          loading={priority || eager ? 'eager' : 'lazy'}
-        />
+        {image ? (
+          <Image
+            src={image}
+            alt={imageAlt ?? ''}
+            fill
+            sizes="(min-width: 1280px) 52vw, (min-width: 768px) 70vw, 86vw"
+            className={styles.image}
+            priority={priority}
+            loading={priority || eager ? 'eager' : 'lazy'}
+          />
+        ) : null}
         <div className={styles.veil} aria-hidden="true" />
 
         <div className={styles.meta}>

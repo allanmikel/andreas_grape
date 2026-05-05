@@ -13,10 +13,12 @@ if (typeof window !== 'undefined') {
  *
  *   Desktop / fine pointer:  scrubbed horizontal translate. The track follows
  *                            the finger continuously across the timeline.
- *   Mobile / coarse pointer: discrete slide switching. Scroll progress maps
- *                            to a target panel index; each switch is its own
- *                            short controlled tween, so cards hold between
- *                            transitions instead of floating.
+ *   Mobile / coarse pointer: one-step state machine. Scroll progress only
+ *                            commits to advancing when it has crossed a
+ *                            direction-aware threshold and a per-step
+ *                            cooldown has elapsed, so a single flick never
+ *                            skips two panels. Each commit is one short
+ *                            controlled tween; cards hold between transitions.
  *
  * Active card detection is progress-based and only mutates the DOM when the
  * centered index changes. No-op under prefers-reduced-motion.
@@ -58,28 +60,52 @@ export function usePinnedHorizontalScroll(
       };
 
       if (coarse) {
-        // --- Mobile: discrete slide switching ----------------------------- //
-        // Each fullscreen card is 100vw. Vertical scroll progress maps to a
-        // target index; the track tweens to that panel in a short controlled
-        // animation, then holds. No scrub — between switches the track sits
-        // still, so the user reads a deliberate "swipe to next" instead of a
-        // continuous floating timeline.
+        // --- Mobile: one-step state machine ------------------------------- //
+        // Vertical scroll only ever moves the gallery by exactly one card per
+        // gesture. A direction-aware threshold + cooldown filter out the
+        // micro-jitter and momentum spikes that previously caused a single
+        // flick to skip two panels.
         const last = cards.length - 1;
+        const stepSize = 1 / Math.max(1, last);
+        // Progress fraction of a single step that must accumulate before we
+        // commit to advancing. 0.55 keeps small accidental drags inert while
+        // still feeling responsive on a deliberate swipe.
+        const STEP_THRESHOLD = stepSize * 0.55;
+        const COOLDOWN_MS = 450;
+        const TRANSITION = { duration: 0.72, ease: 'power3.inOut' as const };
 
-        // One viewport of vertical scroll per image switch. Times last so the
-        // pin lasts exactly long enough to traverse every panel once.
-        const totalDistance = () => window.innerHeight * Math.max(1, last);
+        // Pin a little longer than (n-1) viewports so the user can over-scroll
+        // slightly past the last card without the section releasing mid-tween.
+        const totalDistance = () =>
+          window.innerHeight * Math.max(1, last) * 1.15;
 
-        const goTo = (index: number) => {
-          const clamped = Math.min(last, Math.max(0, index));
+        let currentIndex = 0;
+        let isAnimating = false;
+        let lastStepProgress = 0;
+        let lastTransitionAt = 0;
+
+        const step = (direction: 1 | -1, atProgress: number) => {
+          const next = currentIndex + direction;
+          if (next < 0 || next > last) return;
+
+          // Update logical state synchronously so any onUpdate ticks that
+          // arrive mid-tween see the new currentIndex and bail out of the
+          // threshold check against the *previous* card.
+          currentIndex = next;
+          lastStepProgress = atProgress;
+          lastTransitionAt = Date.now();
+          isAnimating = true;
+          setActive(next);
+
           gsap.to(track, {
-            x: -clamped * window.innerWidth,
-            duration: 0.55,
-            ease: 'power3.out',
+            x: -next * window.innerWidth,
+            ...TRANSITION,
             force3D: true,
             overwrite: true,
+            onComplete: () => {
+              isAnimating = false;
+            },
           });
-          setActive(clamped);
         };
 
         ScrollTrigger.create({
@@ -89,15 +115,30 @@ export function usePinnedHorizontalScroll(
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          fastScrollEnd: true,
+          // fastScrollEnd fires extra onUpdates on flick release which can
+          // re-trigger a step the cooldown is supposed to swallow.
+          fastScrollEnd: false,
           onUpdate: (self) => {
-            const target = Math.round(self.progress * last);
-            if (target !== activeIndex) goTo(target);
+            if (isAnimating) return;
+            if (Date.now() - lastTransitionAt < COOLDOWN_MS) return;
+
+            const delta = self.progress - lastStepProgress;
+            if (Math.abs(delta) < STEP_THRESHOLD) return;
+
+            const direction: 1 | -1 = delta > 0 ? 1 : -1;
+            if (direction > 0 && currentIndex >= last) return;
+            if (direction < 0 && currentIndex <= 0) return;
+
+            step(direction, self.progress);
           },
           onRefresh: (self) => {
-            const target = Math.round(self.progress * last);
-            // Snap track to the correct panel after layout shifts (address-bar
-            // collapse, rotation) without animating.
+            // Layout shift (rotation, address-bar collapse): snap track to
+            // the panel matching current scroll progress without animating,
+            // and re-baseline the threshold so we don't immediately fire.
+            const target = Math.min(last, Math.max(0, Math.round(self.progress * last)));
+            currentIndex = target;
+            lastStepProgress = self.progress;
+            isAnimating = false;
             gsap.set(track, { x: -target * window.innerWidth, force3D: true });
             setActive(target);
           },

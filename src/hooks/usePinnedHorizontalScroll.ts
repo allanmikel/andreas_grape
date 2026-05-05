@@ -63,9 +63,11 @@ export function usePinnedHorizontalScroll(
         },
         {
           // Center band: a card becomes active once it sits inside the
-          // middle 40% of the viewport.
-          rootMargin: '-30% 0px -30% 0px',
-          threshold: [0, 0.35, 0.5, 0.65, 1],
+          // middle 30% of the viewport. Tighter than half so on shorter
+          // landscape panels the highlight still feels deliberately
+          // centered and only one card wins at a time.
+          rootMargin: '-35% 0px -35% 0px',
+          threshold: [0, 0.25, 0.5, 0.75, 1],
         },
       );
 

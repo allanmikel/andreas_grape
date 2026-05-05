@@ -28,17 +28,16 @@
     filter 200ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: vertical fullscreen panels. Each card fills the viewport
-  // edge-to-edge so the next image begins exactly where the previous one
-  // ends — the IntersectionObserver in the hook flips data-active on the
-  // card centered in the viewport, which drives the slow zoom + text reveal.
+  // Touch devices: edge-to-edge landscape panels stacked vertically. The
+  // IntersectionObserver in the hook flips data-active on the panel
+  // centered in the viewport, which drives the slow zoom + text reveal.
   @include touch {
-    flex: 0 0 100svh;
+    flex: 0 0 auto;
     width: 100vw;
     max-width: none;
-    height: 100svh;
+    height: auto;
     max-height: none;
-    aspect-ratio: auto;
+    aspect-ratio: 16 / 10;
     filter: none;
     opacity: 1;
     transform: none;
@@ -102,12 +101,12 @@
   .card[data-active='true'] & { transform: scale(1.03); }
 
   // Touch: only the highlighted (centered) card runs a slow, subtle zoom.
-  // Long duration + ease-out so the motion reads as cinematic drift, not
-  // a snap.
+  // Landscape panels are shorter than fullscreen, so the scale stays
+  // gentle to avoid drawing attention away from the text overlay.
   @include touch {
     transform: scale(1);
-    transition: transform 5000ms $ease-soft;
-    .card[data-active='true'] & { transform: scale(1.08); }
+    transition: transform 4500ms $ease-soft;
+    .card[data-active='true'] & { transform: scale(1.04); }
   }
 }
 
@@ -145,6 +144,12 @@
   justify-content: space-between;
   @include eyebrow;
   color: rgba(232, 234, 237, 0.78);
+
+  @include touch {
+    top: $space-sm;
+    left: $space-sm;
+    right: $space-sm;
+  }
 }
 
 .body {
@@ -156,10 +161,13 @@
   flex-direction: column;
   gap: 0.5rem;
 
-  // Mobile fullscreen panels run edge-to-edge under the device's home-bar
-  // safe area, so push the body up to clear it.
+  // Mobile landscape panels are short, so tighten the body padding and
+  // still respect the iOS home-bar safe area on edge-to-edge images.
   @include touch {
-    bottom: max(#{$space-md}, calc(env(safe-area-inset-bottom) + #{$space-md}));
+    bottom: max(#{$space-sm}, calc(env(safe-area-inset-bottom) + #{$space-sm}));
+    left: $space-sm;
+    right: $space-sm;
+    gap: 0.35rem;
   }
 }
 
@@ -199,7 +207,11 @@
   line-height: 1.5;
   max-width: min(42ch, 100%);
 
-  @media (max-width: 767px) { font-size: 0.875rem; }
+  @media (max-width: 767px) {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    max-width: min(38ch, 100%);
+  }
 
   // Visible only on the highlighted (active) card or when keyboard-focused.
   // Hover alone no longer reveals the description — that beat belongs to the

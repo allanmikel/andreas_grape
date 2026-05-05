@@ -25,22 +25,22 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: pinned vertical carousel. Cards are full-width editorial
-  // frames, capped so each one fills most of the viewport when centered.
-  // Inactive state is light (no filter work) so the page-driven Y translation
-  // stays fully composited.
+  // Touch devices: pinned horizontal carousel. Drop the saturate filter
+  // entirely — it forces a full-card bitmap re-rasterisation each frame and
+  // wrecks smoothness under the page-driven X translate. Active/inactive is
+  // expressed with opacity + scale only, both cheap on the compositor.
   @include touch {
-    width: 88vw;
-    max-width: none;
+    width: 86vw;
+    max-width: 540px;
     aspect-ratio: 4 / 5;
-    max-height: 72svh;
+    max-height: 78svh;
     filter: none;
 
     opacity: 0.7;
-    transform: scale(0.985);
+    transform: scale(0.98);
     transition:
       opacity 350ms $ease-soft,
-      transform 450ms $ease-soft;
+      transform 350ms $ease-soft;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -101,7 +101,7 @@
 
   // Touch: no per-card image zoom. The card frame itself handles the
   // active/inactive transform — image stays static so we don't pay for
-  // bitmap re-rasterisation during the pinned vertical translate.
+  // bitmap re-rasterisation during the pinned horizontal translate.
   @include touch {
     transform: none;
     transition: none;
@@ -197,7 +197,7 @@
   transition: opacity 500ms $ease-out, transform 500ms $ease-out;
   transition-delay: 80ms;
 
-  // Touch: lighter description transition for the pinned vertical carousel.
+  // Touch: lighter description transition for the pinned horizontal carousel.
   @include touch {
     transition: opacity 350ms $ease-soft, transform 350ms $ease-soft;
     transition-delay: 60ms;

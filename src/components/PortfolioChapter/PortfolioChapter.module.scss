@@ -4,13 +4,10 @@
 // =============================================================================
 // PortfolioChapter
 //
-// Desktop / fine pointer:
-//   Section pins, track is a horizontal row, GSAP translates X.
-//
-// Mobile / coarse pointer:
-//   Section pins, track is a vertical column, GSAP translates Y.
-//   Same cinematic "one card at a time" beat as desktop, oriented to the
-//   device's natural reading direction.
+// Every device:
+//   Section pins, track is a horizontal row, vertical page scroll drives a
+//   GSAP X translation. Mobile uses a longer pin distance + higher scrub for
+//   smoothness under finger inertia.
 //
 // Reduced motion:
 //   Section unpins; track flows as a static vertical sequence.
@@ -36,6 +33,7 @@
   flex-direction: column;
   padding-block: $space-md;
   overflow: hidden;
+  overscroll-behavior: contain;
 }
 
 .header {
@@ -81,35 +79,6 @@
 
   @include tablet  { width: max(14vw, calc(50vw - 36vw)); }
   @include desktop { width: max(21vw, calc(50vw - 550px)); }
-}
-
-// --- Mobile / coarse pointer -------------------------------------------- //
-// Same pinned chapter, vertical column track. GSAP translates Y.
-@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
-  .track {
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    flex: 0 0 auto;
-    height: auto;
-    width: 100%;
-    gap: $space-md;
-  }
-
-  .chapter[data-tone='quiet'] .track {
-    gap: $space-lg;
-  }
-
-  // Vertical centering spacers — push the first card down so it lands
-  // under the header in a centered resting state, and let the last card
-  // exit the pin space cleanly. Tighter than the prior 14svh because long
-  // spacers translate to dead scroll travel that read as delayed motion.
-  .spacerStart,
-  .spacerEnd {
-    flex: 0 0 auto;
-    width: 1px;
-    height: 10svh;
-  }
 }
 
 // --- Reduced motion ----------------------------------------------------- //

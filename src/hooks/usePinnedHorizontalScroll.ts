@@ -11,16 +11,12 @@ if (typeof window !== 'undefined') {
 /**
  * Pin a chapter section while the page-scroll drives the inner card track.
  *
- *   Desktop / fine pointer:  vertical page scroll → horizontal track translate.
- *   Mobile / coarse pointer: vertical page scroll → vertical track translate.
+ * Vertical page scroll → horizontal track translate on every device. Mobile
+ * uses a longer pin distance and higher scrub so the same interaction reads
+ * smoothly under finger inertia and iOS address-bar shifts.
  *
- * Same cinematic "one card at a time" feeling on both axes, just oriented to
- * match the device's natural reading direction. Active card detection is
- * progress-based and only mutates the DOM when the centered index changes.
- *
- * No-op under prefers-reduced-motion: CSS hands the chapter a natural flow.
- *
- * The hook name is kept for API stability; behaviour is now bi-axial.
+ * Active card detection is progress-based and only mutates the DOM when the
+ * centered index changes. No-op under prefers-reduced-motion.
  */
 export function usePinnedHorizontalScroll(
   sectionRef: RefObject<HTMLElement | null>,
@@ -38,7 +34,7 @@ export function usePinnedHorizontalScroll(
     const coarse = window.matchMedia('(pointer: coarse)').matches;
 
     track.style.willChange = 'transform';
-    gsap.set(track, { force3D: true, x: 0, y: 0 });
+    gsap.set(track, { force3D: true, x: 0 });
 
     let rafId = 0;
 
@@ -59,23 +55,17 @@ export function usePinnedHorizontalScroll(
         }
       };
 
-      // Axis-aware travel computation. The track is laid out as a row on
-      // desktop and a column on mobile (CSS in PortfolioChapter), so its
-      // scrollWidth or scrollHeight expresses the available carousel travel.
-      const travel = () => {
-        if (coarse) return Math.max(0, track.scrollHeight - window.innerHeight);
-        return Math.max(0, track.scrollWidth - window.innerWidth);
-      };
+      // Track is laid out as a horizontal row on every device, so scrollWidth
+      // expresses the available carousel travel.
+      const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
-      // Vertical scroll distance the chapter consumes before unpinning.
-      // A longer mobile pin gives each card more page-scroll to traverse,
-      // which translates to a slower, smoother visual cadence per finger
-      // movement and reduces the jumpy feel of an aggressive carousel.
-      const distance = () => travel() * (coarse ? 1.8 : 1);
+      // Vertical scroll distance the chapter consumes before unpinning. A
+      // longer mobile pin slows the visual cadence per finger movement and
+      // dampens the jumpy feel of finger inertia.
+      const distance = () => horizontal() * (coarse ? 2.2 : 1);
 
       gsap.to(track, {
-        // Translate along the axis CSS lays the cards out on.
-        ...(coarse ? { y: () => -travel() } : { x: () => -travel() }),
+        x: () => -horizontal(),
         ease: 'none',
         force3D: true,
         scrollTrigger: {

@@ -178,7 +178,11 @@
 
 .name {
   font-family: $font-mono;
-  font-weight: 400;
+  // 500 anchors the card name as the heaviest weight in the document. The
+  // hero headline is light (300), eyebrows are mid (500), card names are
+  // mid-strong (500) — so the active card carries clear visual gravity
+  // without resorting to size escalation.
+  font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.05;
   @include fluid-type(1.5rem, 3.4vw, 2.6rem);

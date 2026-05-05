@@ -64,7 +64,10 @@
 // --- Headline ------------------------------------------------------------- //
 .headline {
   font-family: $font-mono;
-  font-weight: 400;
+  // 300 over 400: the headline carries enough optical weight from sheer size
+  // (3.6vw fluid). A lighter weight keeps it cinematic and widens the contrast
+  // gap to the heavier eyebrow + card titles so the hierarchy reads at a glance.
+  font-weight: 300;
   letter-spacing: -0.015em;
   line-height: 1.18;
   color: $color-text;

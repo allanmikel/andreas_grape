@@ -26,10 +26,13 @@
 }
 
 // Direction B has no serif/sans split. Eyebrow = uppercase mono at small size.
+// Weight 500 instead of 400: at 0.6875rem the mono needs the extra mass to
+// stay legible against the cold text-muted tone, and it also widens the
+// weight gap to the lighter headline so hierarchy lands without size alone.
 @mixin eyebrow {
   font-family: #{$font-mono};
   font-size: 0.6875rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #{$color-text-muted};

@@ -164,7 +164,6 @@ export const content = {
 
   roadAhead: {
     eyebrow: 'The road ahead',
-    title: '2026 →.',
     items: [
       { year: '2026.', text: 'Building institutional bridges between angels and the capital that scales them.' },
       { year: '2027.', text: 'Scaling Angel House as the operational base for the Nordic capital community.' },

@@ -70,19 +70,19 @@ export function usePinnedHorizontalScroll(
           scrub: isCoarse() ? 0.9 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          fastScrollEnd: true,
           // 'transform' pin is steadier than the default 'fixed' on iOS where
           // the address-bar chrome shifts the layout viewport mid-scroll.
           ...(isCoarse() && { pinType: 'transform' as const }),
-          // Touch only: snap each card center-screen with a slow, soft glide
-          // so flick momentum lands cleanly without feeling abrupt.
+          // Touch only: snap each card center-screen with a slow, soft glide.
+          // Inertia disabled and short delay so flicks settle cleanly without
+          // the snap engine fighting iOS rubberband momentum.
           ...(useSnap && {
             snap: {
               snapTo: 1 / (cards.length - 1),
               duration: { min: 0.45, max: 0.9 },
               ease: 'power3.out',
-              delay: 0.15,
-              inertia: true,
+              delay: 0.08,
+              inertia: false,
             },
           }),
           onUpdate: (self) => setActive(self.progress),

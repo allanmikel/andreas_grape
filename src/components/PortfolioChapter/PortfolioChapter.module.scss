@@ -75,8 +75,8 @@
   // Mobile: smaller spacer because cards are already 86vw wide.
   width: max(7vw, calc(50vw - 43vw));
 
-  @include tablet  { width: max(7vw, calc(50vw - 35vw)); }
-  @include desktop { width: max(8vw, calc(50vw - 440px)); }
+  @include tablet  { width: max(14vw, calc(50vw - 36vw)); }
+  @include desktop { width: max(21vw, calc(50vw - 550px)); }
 }
 
 // --- Reduced-motion fallback --------------------------------------------- //

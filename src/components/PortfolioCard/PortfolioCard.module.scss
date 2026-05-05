@@ -7,6 +7,9 @@
   width: 86vw;
   max-width: 540px;
   aspect-ratio: 4 / 5;
+  // Cap height so the body (name/subtitle/description) at the absolute bottom
+  // of the card always sits inside the pinned viewport, never below the fold.
+  max-height: 78vh;
   position: relative;
   color: $color-text;
   text-decoration: none;
@@ -23,8 +26,10 @@
   filter: saturate(0.7);
   will-change: transform, opacity, filter;
 
-  @include tablet  { width: 70vw; max-width: 720px; aspect-ratio: 3 / 4; }
-  @include desktop { width: 52vw; max-width: 880px; aspect-ratio: 4 / 5; }
+  // Landscape on tablet and desktop so the card behaves as an editorial frame
+  // rather than a phone-shaped portrait card.
+  @include tablet  { width: 72vw; max-width: 880px;  aspect-ratio: 4 / 3;  max-height: 76vh; }
+  @include desktop { width: 58vw; max-width: 1100px; aspect-ratio: 16 / 10; max-height: 76vh; }
 
   &[data-active='true'] {
     opacity: 1;

@@ -37,57 +37,60 @@ export function usePinnedHorizontalScroll(
     const coarse  = isCoarse();
 
     track.style.willChange = 'transform';
+    // Promote to a 3D layer so iOS keeps the track on its compositor thread
+    // and avoids re-rasterising on every scroll tick.
+    gsap.set(track, { force3D: true });
 
     const ctx = gsap.context(() => {
       const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
       if (!cards.length) return;
 
-      // Track the last applied index so per-frame ScrollTrigger updates only
-      // touch the DOM when the centered card actually changes — eliminates a
-      // visible flicker on mobile during fast scroll.
-      let lastIdx = -1;
+      // Cache the active index so per-frame ScrollTrigger updates only touch
+      // the DOM when the centered card actually changes. Eliminates the
+      // per-tick attribute churn that read as flicker on mobile.
+      let activeIndex = -1;
 
-      const setActive = (progress: number) => {
+      const setActiveByProgress = (progress: number) => {
         const last = cards.length - 1;
         const raw  = Math.round(progress * last);
-        const idx  = Math.min(last, Math.max(0, raw));
-        if (idx === lastIdx) return;
-        lastIdx = idx;
+        const next = Math.min(last, Math.max(0, raw));
+        if (next === activeIndex) return;
+        activeIndex = next;
         for (let i = 0; i < cards.length; i++) {
-          cards[i].dataset.active = i === idx ? 'true' : 'false';
+          cards[i].dataset.active = i === next ? 'true' : 'false';
         }
       };
 
       // Vertical scroll distance the chapter consumes before unpinning.
-      // On touch we stretch beyond the raw horizontal travel so each flick
-      // covers less horizontal ground per pixel of vertical scroll, reading
-      // as smoother cinematic motion rather than a darted carousel.
+      // On touch we stretch the pin so each pixel of finger movement covers
+      // less horizontal ground — reads as cinematic motion, not a flick.
       const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
-      const distance   = () => horizontal() * (coarse ? 1.8 : 1);
+      const distance   = () => horizontal() * (coarse ? 2.2 : 1);
 
       gsap.to(track, {
         x: () => -horizontal(),
         ease: 'none',
+        force3D: true,
         scrollTrigger: {
           trigger: section,
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
           // Softer scrub on touch trails the finger more, smoothing jitter.
-          scrub: coarse ? 1.0 : 0.6,
+          scrub: coarse ? 1.2 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,
           // No snap on touch: the longer distance + soft scrub already lands
           // each card cleanly, and snap was the source of perceived jitter.
-          onUpdate: (self) => setActive(self.progress),
-          onRefresh: (self) => setActive(self.progress),
+          onUpdate: (self) => setActiveByProgress(self.progress),
+          onRefresh: (self) => setActiveByProgress(self.progress),
         },
       });
 
-      // Force the first card active immediately, bypassing the lastIdx guard.
-      lastIdx = -1;
-      setActive(0);
+      // Force the first card active immediately, bypassing the cache guard.
+      activeIndex = -1;
+      setActiveByProgress(0);
     }, section);
 
     return () => {

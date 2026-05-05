@@ -25,6 +25,15 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
+  // Touch devices: shorter transitions reduce the felt latency between scroll
+  // input and visual response, which removes the lingering "lag" on mobile.
+  @include touch {
+    transition:
+      opacity 450ms $ease-out,
+      transform 450ms $ease-out,
+      filter 450ms $ease-out;
+  }
+
   // Landscape on tablet and desktop so the card behaves as an editorial frame
   // rather than a phone-shaped portrait card.
   @include tablet  { width: 72vw; max-width: 880px;  aspect-ratio: 4 / 3;  max-height: 76vh; }

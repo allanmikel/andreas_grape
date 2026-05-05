@@ -13,12 +13,11 @@ if (typeof window !== 'undefined') {
  *
  *   Desktop / fine pointer:  scrubbed horizontal translate. The track follows
  *                            the finger continuously across the timeline.
- *   Mobile / coarse pointer: one-step state machine. Scroll progress only
- *                            commits to advancing when it has crossed a
- *                            direction-aware threshold and a per-step
- *                            cooldown has elapsed, so a single flick never
- *                            skips two panels. Each commit is one short
- *                            controlled tween; cards hold between transitions.
+ *   Mobile / coarse pointer: no-op. Cards flow as a static vertical sequence
+ *                            via CSS — native scroll, zero JS layer between
+ *                            finger and motion. Every card is rendered active
+ *                            so descriptions stay readable as the user
+ *                            scrolls past.
  *
  * Active card detection is progress-based and only mutates the DOM when the
  * centered index changes. No-op under prefers-reduced-motion.
@@ -38,153 +37,60 @@ export function usePinnedHorizontalScroll(
 
     const coarse = window.matchMedia('(pointer: coarse)').matches;
 
+    const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
+    if (!cards.length) return;
+
+    if (coarse) {
+      // Mobile: static vertical sequence. CSS lays the cards out as a column
+      // of editorial panels and native scroll moves through them. We just
+      // mark every card active so the description copy is visible on each.
+      for (let i = 0; i < cards.length; i++) {
+        cards[i].dataset.active = 'true';
+      }
+      return;
+    }
+
+    // Desktop: scrubbed horizontal translate. The track is a row, vertical
+    // page scroll drives a GSAP X tween, the section pins for the duration.
     track.style.willChange = 'transform';
     gsap.set(track, { force3D: true, x: 0 });
 
     let rafId = 0;
+    let activeIndex = -1;
+
+    const setActive = (next: number) => {
+      const last = cards.length - 1;
+      const clamped = Math.min(last, Math.max(0, next));
+      if (clamped === activeIndex) return;
+      activeIndex = clamped;
+      for (let i = 0; i < cards.length; i++) {
+        cards[i].dataset.active = i === clamped ? 'true' : 'false';
+      }
+    };
 
     const ctx = gsap.context(() => {
-      const cards = Array.from(track.querySelectorAll<HTMLElement>(cardSelector));
-      if (!cards.length) return;
+      const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
-      let activeIndex = -1;
-
-      const setActive = (next: number) => {
-        const last = cards.length - 1;
-        const clamped = Math.min(last, Math.max(0, next));
-        if (clamped === activeIndex) return;
-        activeIndex = clamped;
-        for (let i = 0; i < cards.length; i++) {
-          cards[i].dataset.active = i === clamped ? 'true' : 'false';
-        }
-      };
-
-      if (coarse) {
-        // --- Mobile: one-step state machine ------------------------------- //
-        // Vertical scroll only ever moves the gallery by exactly one card per
-        // gesture. A direction-aware threshold + cooldown filter out the
-        // micro-jitter and momentum spikes that previously caused a single
-        // flick to skip two panels.
-        const last = cards.length - 1;
-        const stepSize = 1 / Math.max(1, last);
-        // Progress fraction of a single step that must accumulate before we
-        // commit to advancing. 0.55 keeps small accidental drags inert while
-        // still feeling responsive on a deliberate swipe.
-        // Tuned for smoothness. Threshold + cooldown together used to lock
-        // scroll input for ~1.17s per step, which read as "scrolling but
-        // nothing happens" — the "hacky" feel the user reported.
-        // - Threshold 0.40 commits sooner so swipe maps to motion faster.
-        // - Cooldown 280ms is long enough to prevent the original double-step
-        //   bug (verified empirically) but short enough that successive
-        //   swipes don't feel jammed.
-        // - power3.out (over inOut) skips the slow-start lobe; the card
-        //   leaves immediately on commit, which is what reads as "smooth."
-        const STEP_THRESHOLD = stepSize * 0.40;
-        const COOLDOWN_MS = 280;
-        const TRANSITION = { duration: 0.55, ease: 'power3.out' as const };
-
-        // Pin a little longer than (n-1) viewports so the user can over-scroll
-        // slightly past the last card without the section releasing mid-tween.
-        const totalDistance = () =>
-          window.innerHeight * Math.max(1, last) * 1.15;
-
-        let currentIndex = 0;
-        let isAnimating = false;
-        let lastStepProgress = 0;
-        let lastTransitionAt = 0;
-
-        const step = (direction: 1 | -1, atProgress: number) => {
-          const next = currentIndex + direction;
-          if (next < 0 || next > last) return;
-
-          // Update logical state synchronously so any onUpdate ticks that
-          // arrive mid-tween see the new currentIndex and bail out of the
-          // threshold check against the *previous* card.
-          currentIndex = next;
-          lastStepProgress = atProgress;
-          lastTransitionAt = Date.now();
-          isAnimating = true;
-          setActive(next);
-
-          gsap.to(track, {
-            x: -next * window.innerWidth,
-            ...TRANSITION,
-            force3D: true,
-            overwrite: true,
-            onComplete: () => {
-              isAnimating = false;
-            },
-          });
-        };
-
-        ScrollTrigger.create({
+      gsap.to(track, {
+        x: () => -horizontal(),
+        ease: 'none',
+        force3D: true,
+        scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: () => `+=${totalDistance()}`,
+          end: () => `+=${horizontal()}`,
           pin: true,
-          // Default pinType ('fixed'). Transform-based pinning was tried as
-          // a speculative iOS address-bar fix but it competes with native
-          // GPU compositing during finger-inertia and reads as stutter on
-          // real devices. Native fixed-pin is the smoother default.
+          scrub: 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          // fastScrollEnd fires extra onUpdates on flick release which can
-          // re-trigger a step the cooldown is supposed to swallow.
-          fastScrollEnd: false,
-          onUpdate: (self) => {
-            if (isAnimating) return;
-            if (Date.now() - lastTransitionAt < COOLDOWN_MS) return;
+          fastScrollEnd: true,
+          onUpdate: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
+          onRefresh: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
+        },
+      });
 
-            const delta = self.progress - lastStepProgress;
-            if (Math.abs(delta) < STEP_THRESHOLD) return;
+      setActive(0);
 
-            const direction: 1 | -1 = delta > 0 ? 1 : -1;
-            if (direction > 0 && currentIndex >= last) return;
-            if (direction < 0 && currentIndex <= 0) return;
-
-            step(direction, self.progress);
-          },
-          onRefresh: (self) => {
-            // Layout shift (rotation, address-bar collapse): snap track to
-            // the panel matching current scroll progress without animating,
-            // and re-baseline the threshold so we don't immediately fire.
-            const target = Math.min(last, Math.max(0, Math.round(self.progress * last)));
-            currentIndex = target;
-            lastStepProgress = self.progress;
-            isAnimating = false;
-            gsap.set(track, { x: -target * window.innerWidth, force3D: true });
-            setActive(target);
-          },
-        });
-
-        setActive(0);
-      } else {
-        // --- Desktop: scrubbed horizontal translate ----------------------- //
-        const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
-
-        gsap.to(track, {
-          x: () => -horizontal(),
-          ease: 'none',
-          force3D: true,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: () => `+=${horizontal()}`,
-            pin: true,
-            scrub: 0.6,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            fastScrollEnd: true,
-            onUpdate: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
-            onRefresh: (self) => setActive(Math.round(self.progress * (cards.length - 1))),
-          },
-        });
-
-        setActive(0);
-      }
-
-      // Settle pin geometry once after layout (iOS address-bar collapse,
-      // late-loading images, etc.).
       rafId = requestAnimationFrame(() => {
         ScrollTrigger.refresh();
       });

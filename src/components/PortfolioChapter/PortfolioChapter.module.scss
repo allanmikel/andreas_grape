@@ -4,13 +4,17 @@
 // =============================================================================
 // PortfolioChapter
 //
-// Every device:
+// Desktop / fine pointer:
 //   Section pins, track is a horizontal row, vertical page scroll drives a
-//   GSAP X translation. Mobile uses a longer pin distance + higher scrub for
-//   smoothness under finger inertia.
+//   GSAP X translation.
+//
+// Mobile / coarse pointer:
+//   Section does NOT pin. Track flows as a static vertical column of cards;
+//   native scroll moves through them edge-to-edge with zero JS layer between
+//   finger and motion. Each card is rendered with its description visible.
 //
 // Reduced motion:
-//   Section unpins; track flows as a static vertical sequence.
+//   Same vertical sequence as mobile.
 // =============================================================================
 
 .chapter {
@@ -19,8 +23,8 @@
   background: $color-bg;
   border-top: 1px solid $color-divider;
 
-  // Pinned mode contains the translated track. svh avoids iOS address-bar
-  // chrome jumps.
+  // Desktop pin needs a contained chapter; svh avoids iOS address-bar jumps.
+  // (Mobile override below releases this.)
   height: 100svh;
   overflow: hidden;
 }
@@ -34,10 +38,6 @@
   padding-block: $space-md;
   overflow: hidden;
   overscroll-behavior: contain;
-
-  // Mobile fullscreen gallery: kill the vertical padding so the active card
-  // can fill the chapter edge-to-edge under the compact header.
-  @include touch { padding-block: 0; }
 }
 
 .header {
@@ -50,25 +50,6 @@
   margin-bottom: $space-md;
   border-bottom: 1px solid $color-divider;
   @include eyebrow;
-
-  // Mobile fullscreen gallery: a compact, overlaid eyebrow strip so the
-  // pinned image fills the chapter without the header eating viewport.
-  @include touch {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    padding-block: $space-sm;
-    margin-bottom: 0;
-    border-bottom: none;
-    color: rgba(232, 234, 237, 0.85);
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 14, 20, 0.55),
-      rgba(10, 14, 20, 0)
-    );
-  }
 }
 
 .num   { color: $color-text; }
@@ -102,27 +83,45 @@
 
   @include tablet  { width: max(14vw, calc(50vw - 36vw)); }
   @include desktop { width: max(21vw, calc(50vw - 550px)); }
-
-  // Mobile fullscreen gallery has no spacer — the first card already starts
-  // at the viewport's left edge and fills it.
-  @include touch { display: none; }
 }
 
-// Mobile fullscreen track: a row of 100vw panels filling the pinned chapter.
+// --- Mobile / coarse pointer -------------------------------------------- //
+// Static vertical sequence. Section unpins, viewport flows naturally.
 @media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
-  .track {
-    flex: 1 1 auto;
-    align-items: stretch;
-    gap: 0;
-    height: 100svh;
+  .chapter {
+    height: auto;
     overflow: visible;
   }
 
-  .chapter[data-tone='quiet'] .track { gap: 0; }
+  .viewport {
+    height: auto;
+    overflow: visible;
+    padding-block: $space-xl;
+  }
+
+  .header {
+    margin-bottom: $space-lg;
+  }
+
+  .track {
+    @include container;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-xl;
+    height: auto;
+    width: 100%;
+    overflow: visible;
+    will-change: auto;
+  }
+
+  .chapter[data-tone='quiet'] .track { gap: $space-xl; }
+
+  .spacerStart,
+  .spacerEnd { display: none; }
 }
 
 // --- Reduced motion ----------------------------------------------------- //
-// Static vertical sequence — no pinning, no GSAP, no transforms.
+// Same static vertical sequence as mobile.
 @include reduced-motion {
   .chapter {
     height: auto;

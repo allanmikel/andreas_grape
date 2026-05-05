@@ -28,22 +28,21 @@
     filter 200ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: each card is a fullscreen panel in a pinned horizontal
-  // gallery. No scale on inactive (any sub-pixel mismatch between adjacent
-  // 100vw panels reads as a visible seam during the page-driven X translate).
-  // Active/inactive hierarchy is opacity-only so the compositor stays cheap.
+  // Touch devices: editorial vertical sequence. The hook marks every card
+  // as active so the description reads at full opacity; no JS layer between
+  // finger and motion. 4:5 aspect lets each card breathe as its own panel
+  // without dominating the screen, leaving room above/below to telegraph
+  // the next card and keep native scroll feeling natural.
   @include touch {
-    flex: 0 0 100vw;
-    width: 100vw;
+    flex: 0 0 auto;
+    width: 100%;
     max-width: none;
-    height: 100%;
+    aspect-ratio: 4 / 5;
     max-height: none;
-    aspect-ratio: auto;
     filter: none;
-
-    opacity: 0.65;
+    opacity: 1;
     transform: none;
-    transition: opacity 350ms $ease-soft;
+    transition: none;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame

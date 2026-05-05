@@ -55,12 +55,6 @@
   gap: $space-md;
 }
 
-.role {
-  @include eyebrow;
-  color: $color-text;
-  letter-spacing: 0.18em;
-}
-
 // --- Headline ------------------------------------------------------------- //
 .headline {
   font-family: $font-mono;
@@ -73,9 +67,10 @@
   color: $color-text;
 
   // Wide enough that words don't have to break mid-character;
-  // wrapping happens between words only.
+  // wrapping happens between words only. Hero leads the type scale —
+  // editorial titles live one step beneath this.
   max-width: 22ch;
-  @include fluid-type(1.5rem, 3.6vw, 2.875rem);
+  @include fluid-type(1.75rem, 4.4vw, 3.5rem);
 
   // Word-level wrapper from useHeroReveal — keeps characters glued together.
   :global(.word) {

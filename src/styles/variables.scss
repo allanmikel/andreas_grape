@@ -33,6 +33,19 @@ $font-mono:    var(--font-mono), ui-monospace, 'Menlo', monospace;
 $font-display: $font-mono;
 $font-body:    $font-mono;
 
+// --- Type scale tokens --------------------------------------------------- //
+// Three canonical body sizes so the mono stays authoritative. Display sizes
+// stay fluid (clamp) at the component layer; these are for static UI text.
+$type-eyebrow: 0.6875rem;  // Eyebrows, meta caps
+$type-meta:    0.8125rem;  // Card meta, descriptions, secondary UI
+$type-body:    1rem;       // Lead body copy
+
+// Two canonical line-heights. Display sits tight because mono characters are
+// already wide; body needs the air. Hero is the one allowed exception
+// (1.18) where the per-character reveal needs a touch more space.
+$lh-display: 1.05;
+$lh-body:    1.55;
+
 // --- Spacing -------------------------------------------------------------- //
 $space-xs:  0.5rem;
 $space-sm:  1rem;

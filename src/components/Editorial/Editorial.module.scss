@@ -30,11 +30,13 @@
   font-family: $font-mono;
   font-weight: 400;
   letter-spacing: -0.02em;
-  line-height: 1.04;
+  line-height: $lh-display;
   color: $color-text;
   margin-top: $space-sm;
   max-width: 22ch;
-  @include fluid-type(1.75rem, 4vw, 3rem);
+  // One step beneath the hero so editorial titles never out-shout the
+  // page's opening line.
+  @include fluid-type(1.5rem, 3vw, 2.4rem);
 
   @include desktop { max-width: 24ch; }
 }
@@ -47,8 +49,8 @@
 }
 
 .lead {
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: $type-body;
+  line-height: $lh-body;
   max-width: 56ch;
   color: $color-text;
 }
@@ -79,8 +81,8 @@
 }
 
 .rowText {
-  font-size: 0.9375rem;
-  line-height: 1.55;
+  font-size: $type-meta;
+  line-height: $lh-body;
   color: $color-text;
 }
 

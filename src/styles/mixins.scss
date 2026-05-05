@@ -31,9 +31,11 @@
 // weight gap to the lighter headline so hierarchy lands without size alone.
 @mixin eyebrow {
   font-family: #{$font-mono};
-  font-size: 0.6875rem;
+  font-size: #{$type-eyebrow};
   font-weight: 500;
-  letter-spacing: 0.08em;
+  // Single canonical tracking. Components must not override this value;
+  // hierarchy comes from color and placement, not from competing tracking.
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #{$color-text-muted};
 }

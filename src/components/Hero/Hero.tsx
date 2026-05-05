@@ -28,7 +28,6 @@ export function Hero() {
       </div>
 
       <div className={styles.copy}>
-        <span className={styles.role}>{content.hero.role}</span>
         <h1 id="hero-headline" ref={headlineRef} className={styles.headline}>
           {content.hero.sentence}
         </h1>

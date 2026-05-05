@@ -16,10 +16,10 @@ type Props = {
 };
 
 export function PortfolioCard({ item, priority, eager }: Props) {
-  const { name, subtitle, description, image, imageAlt, href, year, status, role, muted } = item;
+  const { name, description, image, imageAlt, href, year, status, muted } = item;
   const external = /^https?:\/\//.test(href);
 
-  const ariaLabel = `${name}. ${role ? `Role: ${role}. ` : ''}${subtitle}. Status: ${status}.`;
+  const ariaLabel = `${name}. ${description} Status: ${status}.`;
 
   return (
     <a
@@ -51,9 +51,7 @@ export function PortfolioCard({ item, priority, eager }: Props) {
         </div>
 
         <div className={styles.body}>
-          {role && <span className={styles.role}>Role · {role}</span>}
           <h3 className={styles.name}>{name}</h3>
-          <p className={styles.subtitle}>{subtitle}</p>
           <p className={styles.description}>{description}</p>
         </div>
       </div>

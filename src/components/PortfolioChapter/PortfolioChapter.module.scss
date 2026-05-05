@@ -34,6 +34,10 @@
   padding-block: $space-md;
   overflow: hidden;
   overscroll-behavior: contain;
+
+  // Mobile fullscreen gallery: kill the vertical padding so the active card
+  // can fill the chapter edge-to-edge under the compact header.
+  @include touch { padding-block: 0; }
 }
 
 .header {
@@ -46,6 +50,25 @@
   margin-bottom: $space-md;
   border-bottom: 1px solid $color-divider;
   @include eyebrow;
+
+  // Mobile fullscreen gallery: a compact, overlaid eyebrow strip so the
+  // pinned image fills the chapter without the header eating viewport.
+  @include touch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding-block: $space-sm;
+    margin-bottom: 0;
+    border-bottom: none;
+    color: rgba(232, 234, 237, 0.85);
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 14, 20, 0.55),
+      rgba(10, 14, 20, 0)
+    );
+  }
 }
 
 .num   { color: $color-text; }
@@ -79,6 +102,23 @@
 
   @include tablet  { width: max(14vw, calc(50vw - 36vw)); }
   @include desktop { width: max(21vw, calc(50vw - 550px)); }
+
+  // Mobile fullscreen gallery has no spacer — the first card already starts
+  // at the viewport's left edge and fills it.
+  @include touch { display: none; }
+}
+
+// Mobile fullscreen track: a row of 100vw panels filling the pinned chapter.
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .track {
+    flex: 1 1 auto;
+    align-items: stretch;
+    gap: 0;
+    height: 100svh;
+    overflow: visible;
+  }
+
+  .chapter[data-tone='quiet'] .track { gap: 0; }
 }
 
 // --- Reduced motion ----------------------------------------------------- //

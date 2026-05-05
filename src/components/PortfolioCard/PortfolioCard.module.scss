@@ -25,22 +25,22 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: pinned horizontal carousel. Drop the saturate filter
-  // entirely — it forces a full-card bitmap re-rasterisation each frame and
-  // wrecks smoothness under the page-driven X translate. Active/inactive is
-  // expressed with opacity + scale only, both cheap on the compositor.
+  // Touch devices: each card is a fullscreen panel in a pinned horizontal
+  // gallery. No scale on inactive (any sub-pixel mismatch between adjacent
+  // 100vw panels reads as a visible seam during the page-driven X translate).
+  // Active/inactive hierarchy is opacity-only so the compositor stays cheap.
   @include touch {
-    width: 86vw;
-    max-width: 540px;
-    aspect-ratio: 4 / 5;
-    max-height: 78svh;
+    flex: 0 0 100vw;
+    width: 100vw;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
     filter: none;
 
-    opacity: 0.7;
-    transform: scale(0.98);
-    transition:
-      opacity 350ms $ease-soft,
-      transform 350ms $ease-soft;
+    opacity: 0.72;
+    transform: none;
+    transition: opacity 350ms $ease-soft;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -54,10 +54,10 @@
     transform: scale(1);
     filter: saturate(1);
 
-    // Touch: lift to rest scale, no filter recompositing.
+    // Touch: full opacity reveal; transform stays none (see fullscreen note).
     @include touch {
       opacity: 1;
-      transform: scale(1);
+      transform: none;
       filter: none;
     }
   }
@@ -153,6 +153,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  // Mobile fullscreen panels run edge-to-edge under the device's home-bar
+  // safe area, so push the body up to clear it.
+  @include touch {
+    bottom: max(#{$space-md}, calc(env(safe-area-inset-bottom) + #{$space-md}));
+  }
 }
 
 .role {

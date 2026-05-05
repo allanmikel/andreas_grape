@@ -62,7 +62,13 @@ export function usePinnedHorizontalScroll(
       // Vertical scroll distance the chapter consumes before unpinning. A
       // longer mobile pin slows the visual cadence per finger movement and
       // dampens the jumpy feel of finger inertia.
-      const distance = () => horizontal() * (coarse ? 2.2 : 1);
+      const distance = () => horizontal() * (coarse ? 2.4 : 1);
+
+      // On mobile each card is 100vw, so cards.length - 1 stops are evenly
+      // spaced across the timeline. Snap nudges the user onto whichever
+      // fullscreen panel is closest after the finger lifts so cards always
+      // come to rest centered, not half-way between two images.
+      const snapSteps = cards.length > 1 ? 1 / (cards.length - 1) : 0;
 
       gsap.to(track, {
         x: () => -horizontal(),
@@ -76,6 +82,15 @@ export function usePinnedHorizontalScroll(
           // Higher scrub on touch trails the finger more, smoothing the
           // perceived motion against iOS rubberband and address-bar shifts.
           scrub: coarse ? 1.2 : 0.6,
+          snap: coarse && snapSteps > 0
+            ? {
+                snapTo: snapSteps,
+                duration: { min: 0.25, max: 0.5 },
+                delay: 0.05,
+                ease: 'power2.out',
+                inertia: false,
+              }
+            : undefined,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           fastScrollEnd: true,

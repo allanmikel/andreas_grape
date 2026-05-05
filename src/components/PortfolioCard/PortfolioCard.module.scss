@@ -25,20 +25,18 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: lighter active-state recipe so scrolling doesn't trigger
-  // expensive filter recompositing or image rasterisation per active flip.
-  // - No filter animation (saturate is composited cheaply but flips per scroll
-  //   were measurable on mid-range Android).
-  // - Subtler scale step (0.97 -> 1) so transform deltas are tiny.
-  // - Higher inactive opacity so the active card still leads visually without
-  //   needing a heavy darken on its neighbours.
+  // Touch devices: cards become a vertical editorial sequence. No active /
+  // inactive distinction — every card reads at full strength so scrolling is
+  // pure native vertical with zero filter, transform, or image work per tick.
   @include touch {
-    opacity: 0.7;
-    transform: scale(0.97);
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 4 / 5;
+    max-height: none;
+    opacity: 1;
+    transform: none;
     filter: none;
-    transition:
-      opacity 350ms $ease-out,
-      transform 350ms $ease-out;
+    transition: none;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -52,9 +50,9 @@
     transform: scale(1);
     filter: saturate(1);
 
-    // On touch the active card stops short of the saturate filter so we
-    // don't pay for a layer-wide filter swap during scroll.
-    @include touch { filter: none; }
+    // On touch every card is already at full state via the @include touch
+    // block above; this rule is a no-op there.
+    @include touch { transform: none; filter: none; }
   }
 
   &[data-muted='true'] .image { filter: grayscale(1) contrast(1.05); }
@@ -94,10 +92,8 @@
   transition: transform 1200ms $ease-out;
   .card[data-active='true'] & { transform: scale(1.03); }
 
-  // Touch: skip the active-card image zoom. Image transforms during a pinned
-  // scroll force the GPU to re-rasterise large bitmaps at every active flip,
-  // which is the single biggest source of mid-range mobile jank. The card
-  // already lifts via its own scale + opacity to signal active state.
+  // Touch: no image zoom, no transition. Cards are static editorial frames
+  // in the vertical sequence — pure scroll without GPU rasterisation work.
   @include touch {
     transition: none;
     .card[data-active='true'] & { transform: none; }
@@ -196,6 +192,14 @@
   .card:focus-visible & {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  // Touch: every card in the vertical sequence reads in full, so the
+  // description is always visible without animation gating.
+  @include touch {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

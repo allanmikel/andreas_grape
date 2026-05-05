@@ -17,12 +17,15 @@
   scroll-snap-align: center;
 
   // Default (non-active) state — slightly recessed.
+  // Active/inactive is a UI state-change, not an intro animation; keep it
+  // under the 300ms "responsive" threshold so cards feel like they snap to
+  // attention rather than drift.
   opacity: 0.55;
   transform: scale(0.94);
   transition:
-    opacity 600ms $ease-out,
-    transform 600ms $ease-out,
-    filter 600ms $ease-out;
+    opacity 280ms $ease-out,
+    transform 280ms $ease-out,
+    filter 200ms $ease-out;
   filter: saturate(0.7);
 
   // Touch devices: each card is a fullscreen panel in a pinned horizontal
@@ -96,7 +99,7 @@
 
 .image {
   object-fit: cover;
-  transition: transform 1200ms $ease-out;
+  transition: transform 700ms $ease-soft;
   .card[data-active='true'] & { transform: scale(1.03); }
 
   // Touch: no per-card image zoom. The card frame itself handles the

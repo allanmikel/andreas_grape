@@ -105,13 +105,19 @@
   gap: 0.6rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid rgba(232, 234, 237, 0.35);
-  transition: border-color 300ms $ease-out, gap 300ms $ease-out;
+  transition:
+    border-color 300ms $ease-out,
+    gap 300ms $ease-out,
+    transform 160ms $ease-out;
 
   &:hover,
   &:focus-visible {
     border-bottom-color: $color-text;
     gap: 0.9rem;
   }
+
+  // Tactile press feedback. Subtle scale tells the user the surface heard them.
+  &:active { transform: scale(0.97); }
 }
 
 .ctaArrow { display: inline-block; }

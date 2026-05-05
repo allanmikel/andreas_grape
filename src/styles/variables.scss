@@ -12,8 +12,9 @@ $color-text-muted: #6B7280;   // Cold grey
 $color-divider:    #1E2530;   // Hairline, almost invisible
 
 // No accent. Deliberately. Color enters through images only.
-// If a single moment ever needs to "ring," it's white-on-black, not orange.
-$color-ring: #FFFFFF;
+// If a single moment ever needs to "ring," it's near-white tinted toward the
+// page background hue — pure #fff would break the cold-neutral cohesion.
+$color-ring: #F2F4F7;
 
 // --- Typography ----------------------------------------------------------- //
 // One typeface. IBM Plex Mono. No serif, no sans, no contrast trick.

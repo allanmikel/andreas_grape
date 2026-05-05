@@ -49,31 +49,34 @@ export function usePinnedHorizontalScroll(
         }
       };
 
-      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      // Vertical scroll distance the chapter consumes before unpinning.
+      // On touch we stretch beyond the raw horizontal travel so each flick
+      // feels longer and more cinematic instead of darting between cards.
+      const horizontal = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const distance   = () => horizontal() * (isCoarse() ? 1.6 : 1);
 
       const useSnap = isCoarse() && cards.length > 1;
 
       gsap.to(track, {
-        x: () => -distance(),
+        x: () => -horizontal(),
         ease: 'none',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
           end: () => `+=${distance()}`,
           pin: true,
-          // Snappier scrub on touch so vertical flicks land cleanly between
-          // cards instead of feeling rubbery; smoother on desktop.
-          scrub: isCoarse() ? 0.25 : 0.6,
+          // Higher scrub on touch = more lag = smoother trailing motion.
+          scrub: isCoarse() ? 0.9 : 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          // Touch only: snap each card center-screen so flick momentum lands
-          // cleanly. Desktop keeps free Lenis-driven scroll for smoothness.
+          // Touch only: snap each card center-screen with a slow, soft glide
+          // so flick momentum lands without feeling abrupt.
           ...(useSnap && {
             snap: {
               snapTo: 1 / (cards.length - 1),
-              duration: { min: 0.15, max: 0.45 },
-              ease: 'power2.out',
-              delay: 0,
+              duration: { min: 0.45, max: 0.9 },
+              ease: 'power3.out',
+              delay: 0.08,
               inertia: false,
             },
           }),

@@ -129,13 +129,13 @@
 }
 
 .description {
-  color: rgba(232, 234, 237, 0.7);
+  color: rgba(232, 234, 237, 0.78);
   font-size: 0.8125rem;
   line-height: 1.5;
-  max-width: 38ch;
+  max-width: 42ch;
 
-  // Hidden by default on desktop — revealed when card is active or focused.
-  // Always visible on touch where there's no hover.
+  // Visible only on the highlighted (active) card — same on desktop and touch.
+  // Hover/focus also reveal it on devices that support them.
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 500ms $ease-out, transform 500ms $ease-out;
@@ -146,11 +146,6 @@
   .card:focus-visible & {
     opacity: 1;
     transform: translateY(0);
-  }
-
-  @include touch {
-    opacity: 1;
-    transform: none;
   }
 }
 

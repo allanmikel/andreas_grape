@@ -25,18 +25,27 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: cards become a vertical editorial sequence. No active /
-  // inactive distinction — every card reads at full strength so scrolling is
-  // pure native vertical with zero filter, transform, or image work per tick.
+  // Touch devices: cards become a vertical editorial sequence with a
+  // one-shot scroll reveal driven by [data-mobile-visible] (the
+  // useMobileCardReveal IntersectionObserver hook owns the attribute flip).
+  // No filter work, no per-frame animation — only one transition per card.
   @include touch {
     width: 100%;
     max-width: none;
     aspect-ratio: 4 / 5;
     max-height: none;
-    opacity: 1;
-    transform: none;
     filter: none;
-    transition: none;
+
+    opacity: 0.65;
+    transform: translateY(24px) scale(0.985);
+    transition:
+      opacity 700ms $ease-soft,
+      transform 800ms $ease-soft;
+
+    &[data-mobile-visible='true'] {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -92,11 +101,13 @@
   transition: transform 1200ms $ease-out;
   .card[data-active='true'] & { transform: scale(1.03); }
 
-  // Touch: no image zoom, no transition. Cards are static editorial frames
-  // in the vertical sequence — pure scroll without GPU rasterisation work.
+  // Touch: subtle one-shot zoom-in on reveal. Default sits at 1.04 so the
+  // image breathes outward to its resting frame as the card enters view.
   @include touch {
-    transition: none;
-    .card[data-active='true'] & { transform: none; }
+    transform: scale(1.04);
+    transition: transform 1200ms $ease-soft;
+    .card[data-active='true'] & { transform: scale(1.04); }
+    .card[data-mobile-visible='true'] & { transform: scale(1); }
   }
 }
 
@@ -144,6 +155,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  // Touch: text fades in slightly after the frame so the reveal reads as a
+  // composed editorial moment rather than a single hard switch.
+  @include touch {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 700ms $ease-soft 120ms,
+      transform 800ms $ease-soft 120ms;
+
+    .card[data-mobile-visible='true'] & {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 .role {
@@ -205,6 +231,7 @@
 
 @include reduced-motion {
   .card { opacity: 1; transform: none; filter: none; transition: none; }
-  .image { transition: none; }
+  .image { transform: none; transition: none; }
+  .body { opacity: 1; transform: none; transition: none; }
   .description { opacity: 1; transform: none; transition: none; }
 }

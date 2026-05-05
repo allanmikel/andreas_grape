@@ -70,9 +70,18 @@ export function usePinnedHorizontalScroll(
         // Progress fraction of a single step that must accumulate before we
         // commit to advancing. 0.55 keeps small accidental drags inert while
         // still feeling responsive on a deliberate swipe.
-        const STEP_THRESHOLD = stepSize * 0.55;
-        const COOLDOWN_MS = 450;
-        const TRANSITION = { duration: 0.72, ease: 'power3.inOut' as const };
+        // Tuned for smoothness. Threshold + cooldown together used to lock
+        // scroll input for ~1.17s per step, which read as "scrolling but
+        // nothing happens" — the "hacky" feel the user reported.
+        // - Threshold 0.40 commits sooner so swipe maps to motion faster.
+        // - Cooldown 280ms is long enough to prevent the original double-step
+        //   bug (verified empirically) but short enough that successive
+        //   swipes don't feel jammed.
+        // - power3.out (over inOut) skips the slow-start lobe; the card
+        //   leaves immediately on commit, which is what reads as "smooth."
+        const STEP_THRESHOLD = stepSize * 0.40;
+        const COOLDOWN_MS = 280;
+        const TRANSITION = { duration: 0.55, ease: 'power3.out' as const };
 
         // Pin a little longer than (n-1) viewports so the user can over-scroll
         // slightly past the last card without the section releasing mid-tween.
@@ -113,12 +122,10 @@ export function usePinnedHorizontalScroll(
           start: 'top top',
           end: () => `+=${totalDistance()}`,
           pin: true,
-          // Pin via CSS transforms instead of position:fixed on touch. iOS
-          // Safari's address-bar collapse fires layout invalidations that can
-          // bump a position:fixed pin off by a frame mid-tween; transform-pin
-          // sidesteps that path. Only enabled on coarse so desktop's existing
-          // pin behaviour is untouched.
-          pinType: 'transform',
+          // Default pinType ('fixed'). Transform-based pinning was tried as
+          // a speculative iOS address-bar fix but it competes with native
+          // GPU compositing during finger-inertia and reads as stutter on
+          // real devices. Native fixed-pin is the smoother default.
           anticipatePin: 1,
           invalidateOnRefresh: true,
           // fastScrollEnd fires extra onUpdates on flick release which can

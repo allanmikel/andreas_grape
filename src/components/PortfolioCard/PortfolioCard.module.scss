@@ -235,28 +235,27 @@
   }
 }
 
-// --- Touch-only: text reveals only on the highlighted (active) panel ---
-// On mobile every non-active card is a pure image panel. Meta + body fade
-// in once the IntersectionObserver promotes the card to data-active='true'.
+// --- Touch-only: text always visible ---
+// On mobile we don't fade text per highlight — that read as jittery during
+// scroll. Every card renders meta/body/description at full opacity; the
+// IntersectionObserver-driven [data-active] state still controls the
+// image's slow zoom for visual emphasis.
 @include touch {
   .meta,
-  .body {
-    opacity: 0;
-    transform: translateY(12px);
-    pointer-events: none;
-    transition:
-      opacity 550ms $ease-soft,
-      transform 650ms $ease-soft;
+  .body,
+  .description {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    pointer-events: auto;
   }
-
-  .meta { transition: opacity 450ms $ease-soft; transform: none; }
 
   .card[data-active='true'] {
     .meta,
-    .body {
+    .body,
+    .description {
       opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+      transform: none;
     }
   }
 }

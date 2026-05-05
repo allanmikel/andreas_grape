@@ -43,7 +43,6 @@
 .header {
   @include container;
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
   gap: $space-md;
   padding-bottom: $space-sm;
@@ -52,9 +51,7 @@
   @include eyebrow;
 }
 
-.num   { color: $color-text; }
 .label { color: $color-text; }
-.count { color: $color-text-muted; }
 
 // --- Track --------------------------------------------------------------- //
 // Default (desktop): horizontal row. GSAP translates X.

@@ -19,8 +19,6 @@ export function PortfolioChapter({ index, label, items, tone = 'primary' }: Prop
 
   usePinnedHorizontalScroll(sectionRef, trackRef);
 
-  const num = String(index).padStart(2, '0');
-
   return (
     <section
       ref={sectionRef}
@@ -31,11 +29,7 @@ export function PortfolioChapter({ index, label, items, tone = 'primary' }: Prop
     >
       <div className={styles.viewport}>
         <header className={styles.header}>
-          <span className={styles.num}>Ch. {num}</span>
           <span className={styles.label}>{label}</span>
-          <span className={styles.count}>
-            {String(items.length).padStart(2, '0')} entries
-          </span>
         </header>
 
         <div ref={trackRef} className={styles.track}>

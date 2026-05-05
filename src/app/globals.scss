@@ -49,10 +49,14 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; font-weight: inherit; }
 }
 
 // --- Focus ---------------------------------------------------------------- //
+// The single restrained accent on the site lives here: a warm gold that sits
+// against the cold neutrals without tipping into the AI-purple/blue reflex.
+// Static surfaces stay monochrome; the accent only surfaces on user intent
+// (keyboard focus, skip-link).
 :focus { outline: none; }
 
 :focus-visible {
-  outline: 1px solid $color-text;
+  outline: 1px solid $color-accent;
   outline-offset: 4px;
 }
 
@@ -62,7 +66,7 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; font-weight: inherit; }
   top: -100px;
   left: $space-md;
   z-index: 10000;
-  background: $color-text;
+  background: $color-accent;
   color: $color-bg;
   padding: $space-sm $space-md;
   font-size: 0.75rem;

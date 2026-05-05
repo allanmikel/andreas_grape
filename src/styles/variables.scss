@@ -5,16 +5,24 @@
 // =============================================================================
 
 // --- Color ---------------------------------------------------------------- //
-$color-bg:         #0A0E14;   // Cold blue-black
-$color-surface:    #11161E;   // Subtle elevation
-$color-text:       #E8EAED;   // Cold off-white (slight blue cast)
-$color-text-muted: #6B7280;   // Cold grey
-$color-divider:    #1E2530;   // Hairline, almost invisible
+// OKLCH-first. Hex fallbacks live in the comment for design-tool sanity, but
+// the runtime values are OKLCH so neutrals stay perceptually even and the
+// single accent below sits next to them without breaking the cold mono cast.
+$color-bg:         oklch(0.155 0.012 250);   // Cold blue-black (~#0A0E14)
+$color-surface:    oklch(0.190 0.014 250);   // Subtle elevation (~#11161E)
+$color-text:       oklch(0.928 0.004 250);   // Cold off-white (~#E8EAED)
+$color-text-muted: oklch(0.555 0.020 250);   // Cold grey (~#6B7280)
+$color-divider:    oklch(0.255 0.014 250);   // Hairline (~#1E2530)
 
-// No accent. Deliberately. Color enters through images only.
-// If a single moment ever needs to "ring," it's near-white tinted toward the
-// page background hue — pure #fff would break the cold-neutral cohesion.
-$color-ring: #F2F4F7;
+// Single accent. Restrained: only used on focus, the skip-link surface, and
+// the active-chapter eyebrow. Warm-gold so it sits against the cold neutrals
+// without falling into the "AI-purple" / "AI-blue" reflex. Chroma low enough
+// (0.07) that it never feels saturated.
+$color-accent: oklch(0.84 0.07 88);
+
+// Focus ring uses a tinted near-white so it stays restrained while still
+// reading as "the system is listening." Pure #fff is banned in the palette.
+$color-ring: oklch(0.97 0.004 250);
 
 // --- Typography ----------------------------------------------------------- //
 // One typeface. IBM Plex Mono. No serif, no sans, no contrast trick.

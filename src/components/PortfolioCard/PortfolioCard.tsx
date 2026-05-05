@@ -21,7 +21,6 @@ export function PortfolioCard({ item, priority }: Props) {
       data-card
       data-muted={muted || undefined}
       data-active="false"
-      data-mobile-visible="false"
       className={styles.card}
       aria-label={ariaLabel}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}

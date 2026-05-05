@@ -4,17 +4,16 @@
 // =============================================================================
 // PortfolioChapter
 //
-// Desktop / fine pointer (default):
-//   - section is pinned to viewport height
-//   - .track is translated horizontally by usePinnedHorizontalScroll
+// Desktop / fine pointer:
+//   Section pins, track is a horizontal row, GSAP translates X.
 //
 // Mobile / coarse pointer:
-//   - section flows naturally as a vertical editorial sequence
-//   - cards stack column-wise with generous spacing
-//   - chapter header preserved
+//   Section pins, track is a vertical column, GSAP translates Y.
+//   Same cinematic "one card at a time" beat as desktop, oriented to the
+//   device's natural reading direction.
 //
-// Reduced-motion:
-//   - same vertical-stack treatment as mobile (no GSAP)
+// Reduced motion:
+//   Section unpins; track flows as a static vertical sequence.
 // =============================================================================
 
 .chapter {
@@ -23,8 +22,8 @@
   background: $color-bg;
   border-top: 1px solid $color-divider;
 
-  // Pinned mode contains the translated track. Use small viewport units so
-  // iOS Safari address-bar chrome doesn't push the body below the fold.
+  // Pinned mode contains the translated track. svh avoids iOS address-bar
+  // chrome jumps.
   height: 100svh;
   overflow: hidden;
 }
@@ -36,6 +35,7 @@
   display: flex;
   flex-direction: column;
   padding-block: $space-md;
+  overflow: hidden;
 }
 
 .header {
@@ -54,42 +54,66 @@
 .label { color: $color-text; letter-spacing: 0.16em; }
 .count { color: $color-text-muted; }
 
-// Quiet-tone tracks (Bets & Advisory) get a touch more breathing room.
-.chapter[data-tone='quiet'] .track {
-  gap: $space-lg;
-}
-
-// --- Track ---------------------------------------------------------------- //
+// --- Track --------------------------------------------------------------- //
+// Default (desktop): horizontal row. GSAP translates X.
 .track {
   display: flex;
   align-items: center;
   gap: $space-md;
   flex: 1 1 auto;
   width: 100%;
-  // GSAP translates this in pinned mode.
   will-change: transform;
 
   @include desktop { gap: $space-lg; }
 }
 
-// Side spacers keep the first and last cards landing centered when the track
-// reaches the start / end of its pinned scroll.
+// Quiet-tone tracks (Bets & Advisory) get extra breathing room.
+.chapter[data-tone='quiet'] .track {
+  gap: $space-lg;
+}
+
+// Desktop spacers — center first/last card horizontally under the pin range.
 .spacerStart,
 .spacerEnd {
   flex: 0 0 auto;
   height: 1px;
-  // Mobile: smaller spacer because cards are already 86vw wide.
   width: max(7vw, calc(50vw - 43vw));
 
   @include tablet  { width: max(14vw, calc(50vw - 36vw)); }
   @include desktop { width: max(21vw, calc(50vw - 550px)); }
 }
 
-// --- Mobile / coarse-pointer + reduced-motion vertical sequence --------- //
-// On phones and any device that opts out of motion, the chapter becomes a
-// natural vertical editorial sequence. No pinning, no horizontal transform,
-// cards stacked with generous breathing room. Header rhythm is preserved.
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+// --- Mobile / coarse pointer -------------------------------------------- //
+// Same pinned chapter, vertical column track. GSAP translates Y.
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .track {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    height: auto;
+    width: 100%;
+    gap: $space-md;
+  }
+
+  .chapter[data-tone='quiet'] .track {
+    gap: $space-lg;
+  }
+
+  // Vertical centering spacers — push the first card down so it lands
+  // under the header in a centered resting state, and let the last card
+  // exit the pin space cleanly.
+  .spacerStart,
+  .spacerEnd {
+    flex: 0 0 auto;
+    width: 1px;
+    height: 14svh;
+  }
+}
+
+// --- Reduced motion ----------------------------------------------------- //
+// Static vertical sequence — no pinning, no GSAP, no transforms.
+@include reduced-motion {
   .chapter {
     height: auto;
     overflow: visible;
@@ -97,11 +121,8 @@
 
   .viewport {
     height: auto;
+    overflow: visible;
     padding-block: $space-xl;
-  }
-
-  .header {
-    margin-bottom: $space-lg;
   }
 
   .track {
@@ -114,12 +135,6 @@
     will-change: auto;
   }
 
-  // Spacers were a horizontal-pin concern only; they have no purpose in a
-  // vertical column.
   .spacerStart,
   .spacerEnd { display: none; }
-
-  // Quiet-tone Bets chapter keeps a slightly looser rhythm but in the
-  // vertical axis now.
-  .chapter[data-tone='quiet'] .track { gap: $space-xl; }
 }

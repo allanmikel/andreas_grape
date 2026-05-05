@@ -25,27 +25,22 @@
     filter 600ms $ease-out;
   filter: saturate(0.7);
 
-  // Touch devices: cards become a vertical editorial sequence with a
-  // one-shot scroll reveal driven by [data-mobile-visible] (the
-  // useMobileCardReveal IntersectionObserver hook owns the attribute flip).
-  // No filter work, no per-frame animation — only one transition per card.
+  // Touch devices: pinned vertical carousel. Cards are full-width editorial
+  // frames, capped so each one fills most of the viewport when centered.
+  // Inactive state is light (no filter work) so the page-driven Y translation
+  // stays fully composited.
   @include touch {
-    width: 100%;
+    width: 88vw;
     max-width: none;
     aspect-ratio: 4 / 5;
-    max-height: none;
+    max-height: 72svh;
     filter: none;
 
-    opacity: 0.65;
-    transform: translateY(24px) scale(0.985);
+    opacity: 0.6;
+    transform: scale(0.97);
     transition:
-      opacity 700ms $ease-soft,
-      transform 800ms $ease-soft;
-
-    &[data-mobile-visible='true'] {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+      opacity 350ms $ease-soft,
+      transform 350ms $ease-soft;
   }
 
   // Landscape on tablet and desktop so the card behaves as an editorial frame
@@ -59,9 +54,12 @@
     transform: scale(1);
     filter: saturate(1);
 
-    // On touch every card is already at full state via the @include touch
-    // block above; this rule is a no-op there.
-    @include touch { transform: none; filter: none; }
+    // Touch: lift to rest scale, no filter recompositing.
+    @include touch {
+      opacity: 1;
+      transform: scale(1);
+      filter: none;
+    }
   }
 
   &[data-muted='true'] .image { filter: grayscale(1) contrast(1.05); }
@@ -101,13 +99,13 @@
   transition: transform 1200ms $ease-out;
   .card[data-active='true'] & { transform: scale(1.03); }
 
-  // Touch: subtle one-shot zoom-in on reveal. Default sits at 1.04 so the
-  // image breathes outward to its resting frame as the card enters view.
+  // Touch: no per-card image zoom. The card frame itself handles the
+  // active/inactive transform — image stays static so we don't pay for
+  // bitmap re-rasterisation during the pinned vertical translate.
   @include touch {
-    transform: scale(1.04);
-    transition: transform 1200ms $ease-soft;
-    .card[data-active='true'] & { transform: scale(1.04); }
-    .card[data-mobile-visible='true'] & { transform: scale(1); }
+    transform: none;
+    transition: none;
+    .card[data-active='true'] & { transform: none; }
   }
 }
 
@@ -155,21 +153,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
-  // Touch: text fades in slightly after the frame so the reveal reads as a
-  // composed editorial moment rather than a single hard switch.
-  @include touch {
-    opacity: 0;
-    transform: translateY(10px);
-    transition:
-      opacity 700ms $ease-soft 120ms,
-      transform 800ms $ease-soft 120ms;
-
-    .card[data-mobile-visible='true'] & {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 }
 
 .role {
@@ -218,14 +201,6 @@
   .card:focus-visible & {
     opacity: 1;
     transform: translateY(0);
-  }
-
-  // Touch: every card in the vertical sequence reads in full, so the
-  // description is always visible without animation gating.
-  @include touch {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }
 

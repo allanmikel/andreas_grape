@@ -4,7 +4,6 @@ import { useRef } from 'react';
 import type { Case } from '@/lib/content';
 import { PortfolioCard } from '@/components/PortfolioCard/PortfolioCard';
 import { usePinnedHorizontalScroll } from '@/hooks/usePinnedHorizontalScroll';
-import { useMobileCardReveal } from '@/hooks/useMobileCardReveal';
 import styles from './PortfolioChapter.module.scss';
 
 type Props = {
@@ -19,7 +18,6 @@ export function PortfolioChapter({ index, label, items, tone = 'primary' }: Prop
   const trackRef   = useRef<HTMLDivElement>(null);
 
   usePinnedHorizontalScroll(sectionRef, trackRef);
-  useMobileCardReveal(trackRef);
 
   const num = String(index).padStart(2, '0');
 

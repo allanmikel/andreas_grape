@@ -37,7 +37,6 @@ export const content = {
 
   background: {
     eyebrow: 'Background',
-    title: 'A short version.',
     milestones: [
       'Built an IT consulting company from scratch. Scaled. Exited.',
       'Early investor in Academic Work. Now Scandinavia’s largest staffing company.',
@@ -45,7 +44,6 @@ export const content = {
       'Co-owner of Angel House. A private members club for angels and creatives.',
       'Now building the operating system for the Nordic private capital market.',
     ],
-    place: 'Stockholm, 2026',
   },
 
   nordicAngelsOverview: {

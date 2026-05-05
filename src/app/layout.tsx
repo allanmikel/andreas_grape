@@ -5,7 +5,7 @@ import { Logo } from '@/components/Logo/Logo';
 import './globals.scss';
 
 const OG_IMAGE = {
-  url: '/og/cover.jpg',
+  url: '/og/OG.jpeg',
   width: 1200,
   height: 630,
   alt: 'Andreas Grape — Building infrastructure for the Nordic private capital market',

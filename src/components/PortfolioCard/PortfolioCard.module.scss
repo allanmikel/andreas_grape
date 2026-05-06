@@ -180,24 +180,32 @@
 }
 
 .name {
-  font-family: $font-mono;
-  // 500 anchors the card name as the heaviest weight in the document. The
-  // hero headline is light (300), eyebrows are mid (500), card names are
-  // mid-strong (500) — so the active card carries clear visual gravity
-  // without resorting to size escalation.
+  font-family: $font-display;
+  // Uppercase Neue Haas Grotesk reads as institutional plate, not headline
+  // — so the size steps down and the weight steps up to keep optical
+  // gravity on the active card. Caps need positive tracking to breathe.
   font-weight: 500;
-  letter-spacing: -0.015em;
-  line-height: $lh-display;
-  @include fluid-type(1.5rem, 3.4vw, 2.6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  @include fluid-type(1.125rem, 2.4vw, 1.75rem);
 }
 
 .description {
   color: rgba(232, 234, 237, 0.78);
-  font-size: $type-meta;
-  line-height: $lh-body;
+  // Uppercase descriptions read as editorial statements rather than
+  // paragraph copy. Step the size down and increase tracking + line-height
+  // so the all-caps lines stay legible without crowding.
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
   max-width: min(42ch, 100%);
 
   @media (max-width: 767px) {
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    line-height: 1.65;
     max-width: min(38ch, 100%);
   }
 

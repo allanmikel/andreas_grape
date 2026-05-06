@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { fontMono } from '@/lib/fonts';
+import { fontBody, fontMono } from '@/lib/fonts';
 import { LenisProvider } from '@/components/Lenis/LenisProvider';
 import { Logo } from '@/components/Logo/Logo';
 import './globals.scss';
@@ -44,7 +44,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={fontMono.variable}>
+    <html lang="en" className={`${fontBody.variable} ${fontMono.variable}`}>
       <body>
         <a href="#main" className="skip-link">Skip to content</a>
         <Logo />

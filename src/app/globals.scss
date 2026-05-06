@@ -21,11 +21,13 @@ html {
 body {
   background: $color-bg;
   color: $color-text;
-  font-family: $font-mono;
-  font-size: 0.875rem;       // Mono reads larger than sans — start tight
+  font-family: $font-body;
+  font-size: 0.9375rem;      // Sans needs a hair more body than the
+                             // previous mono default to read at the same
+                             // optical weight.
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: 0;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

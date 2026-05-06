@@ -27,8 +27,8 @@
 .eyebrow { @include eyebrow; }
 
 .title {
-  font-family: $font-mono;
-  font-weight: 400;
+  font-family: $font-display;
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: $lh-display;
   color: $color-text;

@@ -57,13 +57,13 @@
 
 // --- Headline ------------------------------------------------------------- //
 .headline {
-  font-family: $font-mono;
-  // 300 over 400: the headline carries enough optical weight from sheer size
-  // (3.6vw fluid). A lighter weight keeps it cinematic and widens the contrast
-  // gap to the heavier eyebrow + card titles so the hierarchy reads at a glance.
-  font-weight: 300;
-  letter-spacing: -0.015em;
-  line-height: 1.18;
+  font-family: $font-display;
+  // Neue Haas Grotesk Display at 500: cinematic weight without tipping
+  // into editorial-bold. Negative tracking and a tight line-height firm
+  // the line up at scale.
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  line-height: 1.06;
   color: $color-text;
 
   // Wide enough that words don't have to break mid-character;

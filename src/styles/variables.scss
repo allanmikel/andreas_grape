@@ -25,13 +25,22 @@ $color-accent: oklch(0.84 0.07 88);
 $color-ring: oklch(0.97 0.004 250);
 
 // --- Typography ----------------------------------------------------------- //
-// One typeface. IBM Plex Mono. No serif, no sans, no contrast trick.
-// Hierarchy comes from size, weight, case, and rhythm — never from family.
-$font-mono:    var(--font-mono), ui-monospace, 'Menlo', monospace;
-
-// Aliases kept so section components don't have to know we collapsed the stack.
-$font-display: $font-mono;
-$font-body:    $font-mono;
+// Two families, three roles. Neue Haas Grotesk handles display + body
+// (different weights carry the hierarchy); IBM Plex Mono handles meta.
+// Each variable resolves to the brand face first (loaded via @font-face
+// once licensed), then the next/font fallback (Inter for the sans roles),
+// then the OS fallback.
+//
+//   $font-display  Neue Haas Grotesk Display  hero, section titles, card names
+//   $font-body     Neue Haas Grotesk Text     descriptions, narrative copy
+//   $font-mono     IBM Plex Mono              eyebrows, meta, status, year
+//
+// To swap in the real brand faces: drop the .woff2 files into /public/fonts,
+// add @font-face blocks, and the families already prepended below take
+// precedence with no component edits required.
+$font-display: 'Neue Haas Grotesk Display', 'Helvetica Neue', var(--font-body), 'Inter', sans-serif;
+$font-body:    'Neue Haas Grotesk Text', 'Helvetica Neue', var(--font-body), 'Inter', sans-serif;
+$font-mono:    var(--font-mono), 'IBM Plex Mono', 'SFMono-Regular', ui-monospace, monospace;
 
 // --- Type scale tokens --------------------------------------------------- //
 // Three canonical body sizes so the mono stays authoritative. Display sizes

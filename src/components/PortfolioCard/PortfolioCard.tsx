@@ -44,7 +44,6 @@ export function PortfolioCard({ item, priority, eager }: Props) {
 
       <div className={styles.body}>
         <h3 className={styles.name}>{name}</h3>
-        <p className={styles.description}>{description}</p>
       </div>
     </div>
   );

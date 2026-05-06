@@ -43,9 +43,11 @@
 .header {
   @include container;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: $space-md;
-  padding-bottom: $space-sm;
+  // Equal padding above and below so the label sits centered between the
+  // chapter's top divider and the header's own bottom divider.
+  padding-block: $space-sm;
   margin-bottom: $space-md;
   border-bottom: 1px solid $color-divider;
   @include eyebrow;
@@ -96,10 +98,18 @@
     padding-block: 0;
   }
 
-  // Header stays inside the container; the track underneath escapes it
-  // to run edge-to-edge as a fullscreen vertical sequence.
+  // Header sticks to the top of the viewport for the duration of its
+  // chapter, mirroring the desktop pinned-nav behaviour. As the next
+  // chapter scrolls in, its own sticky header takes over and replaces
+  // this one. Background is opaque so the images underneath don't bleed
+  // through; equal padding-block keeps the label centred between the
+  // chapter's top divider and the header's bottom divider.
   .header {
-    margin-bottom: $space-md;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: $color-bg;
+    margin-bottom: 0;
   }
 
   .track {

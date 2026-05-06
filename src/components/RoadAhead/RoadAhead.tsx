@@ -13,9 +13,9 @@ export function RoadAhead() {
 
         <div className={styles.body}>
           <ul className={styles.list}>
-            {items.map((item) => (
-              <li key={item.year} className={styles.row}>
-                <span className={styles.rowKey}>{item.year}</span>
+            {items.map((item, i) => (
+              <li key={i} className={styles.row}>
+                <span className={styles.rowKey}>{String(i + 1).padStart(2, '0')}.</span>
                 <span className={styles.rowText}>{item.text}</span>
               </li>
             ))}

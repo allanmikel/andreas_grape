@@ -161,12 +161,12 @@ export const content = {
   },
 
   roadAhead: {
-    eyebrow: 'The road ahead',
+    eyebrow: 'Current direction',
     items: [
-      { year: '2026.', text: 'Building institutional bridges between angels and the capital that scales them.' },
-      { year: '2027.', text: 'Scaling Angel House as the operational base for the Nordic capital community.' },
-      { year: '2028.', text: 'Cross-border infrastructure across Stockholm, Oslo, Copenhagen, and Helsinki.' },
-      { year: '2029.', text: 'Institutional investor relations through Nordic Angels at European scale.' },
+      { text: 'Building institutional bridges between angels and the capital that scales them.' },
+      { text: 'Scaling Angel House as the operational base for the Nordic capital community.' },
+      { text: 'Cross-border infrastructure across Stockholm, Oslo, Copenhagen, and Helsinki.' },
+      { text: 'Institutional investor relations through Nordic Angels at European scale.' },
     ],
   },
 

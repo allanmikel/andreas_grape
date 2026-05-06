@@ -37,7 +37,7 @@
     max-width: none;
     height: auto;
     max-height: none;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 3 / 2;
     filter: none;
     opacity: 1;
     transform: none;
@@ -161,12 +161,14 @@
   flex-direction: column;
   gap: 0.5rem;
 
-  // Mobile landscape panels are short, so tighten the body padding and
-  // still respect the iOS home-bar safe area on edge-to-edge images.
+  // Mobile landscape panels: lift the body to the vertical center of the
+  // image, kept flush to the left edge with the standard gutter.
   @include touch {
-    bottom: max(#{$space-sm}, calc(env(safe-area-inset-bottom) + #{$space-sm}));
+    top: 50%;
+    bottom: auto;
     left: $space-sm;
     right: $space-sm;
+    transform: translateY(-50%);
     gap: 0.35rem;
   }
 }

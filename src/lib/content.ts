@@ -175,7 +175,7 @@ export const content = {
   },
 
   footer: {
-    left:  'Stockholm · 2026',
+    left:  'Jakobsbergsgatan 27 · 111 14 Stockholm',
     right: 'Built with intention.',
   },
 } as const;

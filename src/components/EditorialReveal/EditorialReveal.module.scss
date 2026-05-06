@@ -1,0 +1,168 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// Editorial reveal — desktop sweeps in from the left, mobile rises as a
+// bottom sheet. Portal target is document.body so it escapes any pinned
+// or transformed ancestors.
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  // Desktop: panel anchored to the left edge.
+  justify-content: flex-start;
+  align-items: stretch;
+
+  @media (max-width: #{$bp-tablet - 1px}) {
+    // Mobile: panel anchored to the bottom.
+    justify-content: stretch;
+    align-items: flex-end;
+  }
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.55);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: $color-bg;
+  border-right: 1px solid $color-divider;
+  width: min(540px, 92vw);
+  height: 100svh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  color: $color-text;
+
+  // Mobile bottom sheet variant.
+  @media (max-width: #{$bp-tablet - 1px}) {
+    width: 100%;
+    height: auto;
+    max-height: 88svh;
+    border-right: 0;
+    border-top: 1px solid $color-divider;
+    border-radius: 14px 14px 0 0;
+  }
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: $space-md $space-md $space-sm;
+  background: linear-gradient(
+    to bottom,
+    $color-bg 0%,
+    $color-bg 70%,
+    rgba(10, 14, 20, 0) 100%
+  );
+}
+
+.eyebrow { @include eyebrow; }
+
+.close {
+  appearance: none;
+  background: transparent;
+  border: 1px solid $color-divider;
+  color: $color-text;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 200ms $ease-out, color 200ms $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $color-text;
+    outline: none;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-sm $space-md $space-lg;
+}
+
+.title {
+  font-family: $font-display;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: $lh-display;
+  text-transform: uppercase;
+  margin: 0;
+  @include fluid-type(1.5rem, 3vw, 2.2rem);
+}
+
+.description {
+  font-size: $type-body;
+  line-height: $lh-body;
+  color: $color-text;
+  max-width: 56ch;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border-top: 1px solid $color-divider;
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: 8ch 1fr;
+  gap: $space-sm;
+  padding-block: $space-sm;
+  border-bottom: 1px solid $color-divider;
+  align-items: baseline;
+
+  dt {
+    @include eyebrow;
+    color: $color-text-muted;
+    margin: 0;
+  }
+  dd {
+    margin: 0;
+    font-size: $type-meta;
+    color: $color-text;
+  }
+}
+
+.link {
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(232, 234, 237, 0.35);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: $color-text;
+  text-decoration: none;
+  transition: border-color 300ms $ease-out, gap 300ms $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    border-bottom-color: $color-text;
+    gap: 0.9rem;
+  }
+}

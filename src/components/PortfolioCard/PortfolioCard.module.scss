@@ -7,6 +7,16 @@
   width: 86vw;
   max-width: 540px;
   aspect-ratio: 4 / 5;
+  // Card may render as <button> when it carries a reveal payload. Reset
+  // browser button defaults so the existing visual treatment lands the same.
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   // Cap height so the body (name/subtitle/description) at the absolute bottom
   // of the card always sits inside the pinned viewport, never below the fold.
   max-height: 78vh;

@@ -1,0 +1,48 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.rowTrigger {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  text-align: left;
+  color: $color-text;
+  font: inherit;
+  font-size: $type-meta;
+  line-height: $lh-body;
+  cursor: pointer;
+  transition: color 200ms $ease-out, gap 200ms $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    gap: 0.9rem;
+    .rowArrow { opacity: 1; transform: translateX(2px); }
+  }
+
+  &:focus-visible .rowName {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+}
+
+.rowName { color: $color-text; }
+
+.rowCategory {
+  color: $color-text-muted;
+}
+
+.rowArrow {
+  margin-left: auto;
+  color: $color-text-muted;
+  opacity: 0;
+  transform: translateX(0);
+  transition: opacity 200ms $ease-out, transform 200ms $ease-out;
+}

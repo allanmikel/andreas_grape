@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { fontBody, fontMono } from '@/lib/fonts';
 import { LenisProvider } from '@/components/Lenis/LenisProvider';
+import { EditorialRevealProvider } from '@/components/EditorialReveal/EditorialReveal';
 import { Logo } from '@/components/Logo/Logo';
 import './globals.scss';
 
@@ -49,7 +50,9 @@ export default function RootLayout({
         <a href="#main" className="skip-link">Skip to content</a>
         <Logo />
         <LenisProvider>
-          <main id="main">{children}</main>
+          <EditorialRevealProvider>
+            <main id="main">{children}</main>
+          </EditorialRevealProvider>
         </LenisProvider>
       </body>
     </html>

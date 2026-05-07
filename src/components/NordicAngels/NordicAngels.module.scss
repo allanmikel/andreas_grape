@@ -8,16 +8,22 @@
   padding: 0;
   margin: 0;
   width: 100%;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
   text-align: left;
   color: $color-text;
   font: inherit;
   font-size: 1.0625rem;
   line-height: $lh-body;
 
-  @include desktop { font-size: 1.1875rem; }
+  @include desktop {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.1875rem;
+  }
   cursor: pointer;
   transition: color 200ms $ease-out, gap 200ms $ease-out;
 

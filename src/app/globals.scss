@@ -19,13 +19,18 @@ html {
   background-color: $color-bg;
 
   // Mobile: when the page is pulled past the bottom (or top), the body
-  // bounces and reveals the html background. Paint Andreas's portrait
-  // there so the overscroll feels intentional, not blank.
+  // bounces and reveals the html background. Two stacked portraits live
+  // on html so each end of the overscroll bounce reveals a different
+  // photo — hero portrait at the top, the second portrait at the bottom.
+  // Each image is sized to half the viewport so they don't overlap.
   @media (max-width: #{$bp-tablet - 1px}) {
-    background-image: url('/images/andreas_grape.png');
-    background-size: cover;
-    background-position: center 30%;
-    background-repeat: no-repeat;
+    background-image:
+      url('/images/andreas_grape.png'),
+      url('/images/andreas_grape_bottom.jpeg');
+    background-position: top center, bottom center;
+    background-size: 100% 50svh, 100% 50svh;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
   }
 }
 

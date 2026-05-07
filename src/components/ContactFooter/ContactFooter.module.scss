@@ -7,16 +7,21 @@
   padding-block: $space-xl;
   background: $color-bg;
 
-  // Mobile: let the bottom portrait painted on <html> bleed through the
-  // footer instead of being hidden behind a solid block. A vertical
-  // gradient keeps text legible against the photo.
+  // Mobile: paint the second portrait directly on the footer surface so
+  // it's always visible inside the contact block, with a top-heavy
+  // gradient for text legibility. The same photo also lives on <html>
+  // for the bottom overscroll bounce, so the reveal feels continuous.
   @media (max-width: #{$bp-tablet - 1px}) {
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 14, 20, 0.92) 0%,
-      rgba(10, 14, 20, 0.65) 45%,
-      rgba(10, 14, 20, 0.15) 100%
-    );
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(10, 14, 20, 0.95) 0%,
+        rgba(10, 14, 20, 0.7) 35%,
+        rgba(10, 14, 20, 0.2) 100%
+      ),
+      url('/images/andreas_grape_bottom.png') center / cover no-repeat,
+      $color-bg;
+    padding-bottom: $space-2xl;
   }
 }
 

@@ -39,6 +39,9 @@
 
 .rowCategory {
   color: $color-text-muted;
+  font-size: 0.875rem;
+
+  @include desktop { font-size: 0.9375rem; }
 }
 
 .rowArrow {

@@ -49,10 +49,12 @@
 }
 
 .lead {
-  font-size: $type-body;
+  font-size: 1.25rem;
   line-height: $lh-body;
   max-width: 56ch;
   color: $color-text;
+
+  @include desktop { font-size: 1.375rem; }
 }
 
 // --- List rhythm shared by milestones, lines, road-ahead items ---------- //
@@ -81,9 +83,11 @@
 }
 
 .rowText {
-  font-size: $type-meta;
+  font-size: 1.0625rem;
   line-height: $lh-body;
   color: $color-text;
+
+  @include desktop { font-size: 1.1875rem; }
 }
 
 .link {

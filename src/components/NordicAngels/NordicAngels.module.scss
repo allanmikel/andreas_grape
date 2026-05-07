@@ -14,8 +14,10 @@
   text-align: left;
   color: $color-text;
   font: inherit;
-  font-size: $type-meta;
+  font-size: 1.0625rem;
   line-height: $lh-body;
+
+  @include desktop { font-size: 1.1875rem; }
   cursor: pointer;
   transition: color 200ms $ease-out, gap 200ms $ease-out;
 

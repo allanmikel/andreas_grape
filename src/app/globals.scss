@@ -26,7 +26,7 @@ html {
   @media (max-width: #{$bp-tablet - 1px}) {
     background-image:
       url('/images/andreas_grape.png'),
-      url('/images/andreas_grape_bottom.jpeg');
+      url('/images/andreas_grape_bottom.png');
     background-position: top center, bottom center;
     background-size: 100% 60svh, 100% 60svh;
     background-repeat: no-repeat, no-repeat;

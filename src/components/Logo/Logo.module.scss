@@ -18,6 +18,14 @@
     opacity 220ms $ease-out,
     transform 160ms $ease-out;
 
+  // Mobile: chapters get a sticky nav strip at the very top. Lift the logo
+  // up and shrink it so it visually sits inside that strip instead of
+  // floating below the divider.
+  @media (max-width: #{$bp-tablet - 1px}) {
+    top: calc(#{$space-sm} + env(safe-area-inset-top, 0px));
+    gap: 8px;
+  }
+
   &:hover, &:focus-visible { opacity: 1; }
   &:active { transform: scale(0.97); }
 }
@@ -26,6 +34,8 @@
   width: 18px;
   height: auto;
   flex-shrink: 0;
+
+  @media (max-width: #{$bp-tablet - 1px}) { width: 14px; }
 }
 
 .text {
@@ -40,6 +50,8 @@
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+
+  @media (max-width: #{$bp-tablet - 1px}) { font-size: 0.625rem; }
 }
 
 .dot {

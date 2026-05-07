@@ -3,6 +3,7 @@ import { fontBody, fontMono } from '@/lib/fonts';
 import { LenisProvider } from '@/components/Lenis/LenisProvider';
 import { EditorialRevealProvider } from '@/components/EditorialReveal/EditorialReveal';
 import { Logo } from '@/components/Logo/Logo';
+import { ScrollTop } from '@/components/ScrollTop/ScrollTop';
 import './globals.scss';
 
 const OG_IMAGE = {
@@ -52,6 +53,7 @@ export default function RootLayout({
         <LenisProvider>
           <EditorialRevealProvider>
             <main id="main">{children}</main>
+            <ScrollTop />
           </EditorialRevealProvider>
         </LenisProvider>
       </body>

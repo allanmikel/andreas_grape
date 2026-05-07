@@ -83,29 +83,55 @@ function RevealPanel({
     return () => document.removeEventListener('keydown', onKey);
   }, [current, onClose]);
 
-  // Scroll lock. Prefer Lenis stop/start; fall back to body overflow lock so
-  // the page never scrolls underneath the panel and ScrollTrigger doesn't
-  // re-fire during open.
+  // Scroll lock. Prefer Lenis stop/start; fall back to a position-fixed body
+  // lock so iOS Safari doesn't snap the page back to the top when overflow
+  // toggles. We capture the current scroll Y, pin the body, then restore Y
+  // on close.
   useEffect(() => {
     if (!current) return;
 
     const html = document.documentElement;
     const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
-    const prevTouch = body.style.touchAction;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyTouch: body.style.touchAction,
+    };
 
     if (lenis) {
       try { lenis.stop(); } catch {}
     }
+
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+    body.style.width = '100%';
     body.style.touchAction = 'none';
 
     return () => {
-      html.style.overflow = prevHtml;
-      body.style.overflow = prevBody;
-      body.style.touchAction = prevTouch;
+      html.style.overflow = prev.htmlOverflow;
+      body.style.overflow = prev.bodyOverflow;
+      body.style.position = prev.bodyPosition;
+      body.style.top = prev.bodyTop;
+      body.style.left = prev.bodyLeft;
+      body.style.right = prev.bodyRight;
+      body.style.width = prev.bodyWidth;
+      body.style.touchAction = prev.bodyTouch;
+
+      // Restore scroll position before resuming Lenis so its internal
+      // tracker reads the correct Y on the next frame.
+      window.scrollTo(0, scrollY);
+
       if (lenis) {
         try { lenis.start(); } catch {}
       }

@@ -16,6 +16,17 @@ html {
   -webkit-text-size-adjust: 100%;
   text-rendering: geometricPrecision;
   scroll-behavior: auto; // Lenis owns scroll
+  background-color: $color-bg;
+
+  // Mobile: when the page is pulled past the bottom (or top), the body
+  // bounces and reveals the html background. Paint Andreas's portrait
+  // there so the overscroll feels intentional, not blank.
+  @media (max-width: #{$bp-tablet - 1px}) {
+    background-image: url('/images/andreas_grape.png');
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
+  }
 }
 
 body {

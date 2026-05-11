@@ -177,7 +177,7 @@ export const content = {
         built: 'Invest together with the angels building the Nordic market.',
         description: 'The rails Nordic angels use to invest as a group. Terms, allocation, follow-on, all in one place.',
         year: '2024 →', status: 'Active',
-        image: '/images/andreas_grape_portfolio/husa.png',
+        image: '/images/andreas_grape_portfolio/snoboll.jpg',
         href: 'https://nordicangels.com/',
         reveal: { slug: 'snoboll', title: 'Snöboll', category: 'Companies founded',
           theme: 'Angel co-investing', role: 'Co-founder', status: 'Active', year: '2024 →',

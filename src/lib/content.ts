@@ -311,7 +311,7 @@ export const content = {
         built: 'Europe’s annual investor gala.',
         description: 'The yearly stage that recognises the angels and operators shaping European private capital.',
         year: '2021 →', status: 'Active',
-        image: '/images/andreas_grape_portfolio/angel_prize.webp',
+        image: '/images/andreas_grape_portfolio/angel_prize.jpg',
         href: 'https://www.angelprize.com/',
         reveal: { slug: 'angel-prize', title: 'Angel Prize', category: 'Initiatives within Nordic Angels',
           theme: 'Recognition · Community', role: 'Co-founder', status: 'Active', year: '2021 →',

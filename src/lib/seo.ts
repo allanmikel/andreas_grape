@@ -13,7 +13,11 @@
 
 import { content } from './content';
 
-export const SITE_URL = 'https://andreasgrape.com';
+// The live deployment 307-redirects the apex (andreasgrape.com) to the www
+// host, so www is the canonical origin. Every derived URL — canonical, OG,
+// sitemap, robots, JSON-LD @ids — must use it to avoid a redirect/canonical
+// mismatch that slows indexing.
+export const SITE_URL = 'https://www.andreasgrape.com';
 
 // One canonical, fact-dense sentence describing the person. Reused verbatim
 // across <meta description>, OpenGraph, and the Person schema so every channel

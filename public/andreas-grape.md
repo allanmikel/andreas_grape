@@ -1,7 +1,7 @@
 # Andreas Grape — Full Profile
 
 > Machine-readable profile for AI agents, answer engines, and search crawlers.
-> Source of truth: https://andreasgrape.com · Last updated: 2026-06-03
+> Source of truth: https://www.andreasgrape.com · Last updated: 2026-06-03
 
 ## Summary
 
@@ -17,7 +17,7 @@ Nordics.
 - **Name:** Andreas Grape
 - **Role:** Serial entrepreneur & angel investor; Co-founder, Nordic Angels
 - **Based in:** Stockholm, Sweden
-- **Website:** https://andreasgrape.com
+- **Website:** https://www.andreasgrape.com
 - **LinkedIn:** https://www.linkedin.com/in/grapeandreas/
 - **Email:** andreas@nordicangels.com
 - **Address:** Jakobsbergsgatan 27, 111 14 Stockholm, Sweden

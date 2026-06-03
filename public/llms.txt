@@ -6,8 +6,8 @@ This file follows the llms.txt convention (https://llmstxt.org) to give AI agent
 
 ## Profile
 
-- [Full profile (Markdown)](https://andreasgrape.com/andreas-grape.md): Complete biography, all companies founded, current portfolio, initiatives, exits, and the road ahead.
-- [Official site](https://andreasgrape.com): andreasgrape.com
+- [Full profile (Markdown)](https://www.andreasgrape.com/andreas-grape.md): Complete biography, all companies founded, current portfolio, initiatives, exits, and the road ahead.
+- [Official site](https://www.andreasgrape.com): andreasgrape.com
 - [LinkedIn](https://www.linkedin.com/in/grapeandreas/): Andreas Grape on LinkedIn
 
 ## Companies founded

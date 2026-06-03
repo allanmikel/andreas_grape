@@ -1,0 +1,31 @@
+# Andreas Grape
+
+> Stockholm-based serial entrepreneur and angel investor. Co-founder of Nordic Angels (2020, with Ash Pournouri) — the operating system for the Nordic private capital market. 25+ years building, scaling, and exiting companies. Co-owner of Angel House, a private members club for angels and creatives in Stockholm.
+
+This file follows the llms.txt convention (https://llmstxt.org) to give AI agents a clean, authoritative entry point to who Andreas Grape is and what he has built. For the full machine-readable profile, read the detailed file below.
+
+## Profile
+
+- [Full profile (Markdown)](https://andreasgrape.com/andreas-grape.md): Complete biography, all companies founded, current portfolio, initiatives, exits, and the road ahead.
+- [Official site](https://andreasgrape.com): andreasgrape.com
+- [LinkedIn](https://www.linkedin.com/in/grapeandreas/): Andreas Grape on LinkedIn
+
+## Companies founded
+
+- [Nordic Angels](https://nordicangels.com/): The investor network running the Nordic angel layer. Co-founded 2020 with Ash Pournouri.
+- [Angel House](https://www.angelhouse.se/): Private members club for angels and creatives. Stockholm, opened 2025.
+- [Mingla](https://mingla.io/): Gamified networking software for events where capital and talent meet.
+- [Nordisia](https://nordisia.se/): Matching Nordic private capital with institutional-grade real estate development.
+- [Secondry](https://www.secondry.com/): Gateway to Nordic private market secondaries.
+- [Angel Advisory](https://angeladvisory.com/): Bridging angels with corporate finance (Nordic Angel Office / Nordic Corporate Finance).
+
+## Key facts
+
+- Backed Academic Work in 2001 — now Scandinavia's largest staffing company.
+- Built and exited an IT consulting company (2008–2021).
+- Building cross-border private-capital infrastructure across Stockholm, Oslo, Copenhagen, and Helsinki.
+
+## Contact
+
+- Email: andreas@nordicangels.com
+- Location: Jakobsbergsgatan 27, 111 14 Stockholm, Sweden

@@ -66,7 +66,7 @@ infrastructure. Seven business lines run on top of it:
   as a group: terms, allocation, follow-on, syndicates, and SPVs.
 - **Angel Advisory** (2024 →, Active) — Co-founder. Bridges angels with corporate
   finance; operates as Nordic Angel Office and Nordic Corporate Finance. https://angeladvisory.com/
-- **IT Consulting Company** (2008–2021, Exit) — Founder & operator. Built from
+- **One Agency** (2008–2021, Exit) — Founder & operator. Built from
   scratch, scaled, and exited.
 
 ## Current portfolio (investor)

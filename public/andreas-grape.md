@@ -47,7 +47,7 @@ infrastructure. Seven business lines run on top of it:
 | 3 | Mingla | Gamified networking software for events | https://mingla.io/ |
 | 4 | Nordisia | Private capital meets institutional real estate | https://nordisia.se/ |
 | 5 | Secondry | Nordic private market secondaries | https://www.secondry.com/ |
-| 6 | Snöboll | Rails for Nordic angels to co-invest as a group | — |
+| 6 | Snöboll | Rails for Nordic angels to co-invest as a group | https://snoboll.net/ |
 | 7 | Angel Advisory | Bridge between angels and corporate finance | https://angeladvisory.com/ |
 
 ## Companies founded
@@ -63,7 +63,7 @@ infrastructure. Seven business lines run on top of it:
 - **Secondry** (2025 →, Active) — Co-founder. The gateway to Nordic private market
   secondaries — the layer missing for two decades. https://www.secondry.com/
 - **Snöboll** (2024 →, Active) — Co-founder. The rails Nordic angels use to invest
-  as a group: terms, allocation, follow-on, syndicates, and SPVs.
+  as a group: terms, allocation, follow-on, syndicates, and SPVs. https://snoboll.net/
 - **Angel Advisory** (2024 →, Active) — Co-founder. Bridges angels with corporate
   finance; operates as Nordic Angel Office and Nordic Corporate Finance. https://angeladvisory.com/
 - **One Agency** (2008–2021, Exit) — Founder & operator. Built from
